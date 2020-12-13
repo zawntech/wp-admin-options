@@ -57,8 +57,9 @@ class PostTypeSelectOption extends AbstractAdminOption
 
     public function render_single() {
         $args = $this->get_args();
+        $key = esc_attr( $args['key'] );
         ?>
-        <tr>
+        <tr id="row-<?= $key; ?>">
             <th>
                 <label for="<?= $args['key']; ?>"><?= $args['label']; ?></label>
             </th>
@@ -93,8 +94,9 @@ class PostTypeSelectOption extends AbstractAdminOption
 
     public function render_multiple() {
         $args = $this->get_args();
+        $key = esc_attr( $args['key'] );
         ?>
-        <tr>
+        <tr id="row-<?= $key; ?>">
             <th>
                 <label for="<?= $args['key']; ?>"><?= $args['label']; ?></label>
             </th>

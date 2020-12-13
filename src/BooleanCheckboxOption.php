@@ -16,7 +16,7 @@ class BooleanCheckboxOption extends AbstractAdminOption
         $label = esc_html( $this->args['label'] );
         $description = trim( $this->args['description'] );
         ?>
-        <tr>
+        <tr id="row-<?= $key; ?>">
             <th>
                 <label for="<?= $key; ?>"><?= $label; ?></label>
             </th>

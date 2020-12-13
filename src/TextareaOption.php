@@ -12,7 +12,7 @@ class TextareaOption extends AbstractAdminOption
         $description = trim( $this->args['description'] );
         $rows = esc_attr( $this->args['rows'] );
         ?>
-        <tr>
+        <tr id="row-<?= $key; ?>">
             <th>
                 <label for="<?= $key; ?>"><?= $label; ?></label>
             </th>

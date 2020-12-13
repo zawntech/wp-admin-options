@@ -50,7 +50,7 @@ abstract class AbstractAdminOption
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
         $description = trim( $this->args['description'] );
         ?>
-        <tr>
+        <tr id="row-<?= $key; ?>">
             <th>
                 <label for="<?= $key; ?>"><?= $label; ?></label>
             </th>
