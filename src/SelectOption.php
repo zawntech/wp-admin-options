@@ -31,13 +31,29 @@ class SelectOption extends AbstractAdminOption
                     printf( '<p><code>%s</code></p>', $description );
                 }
                 ?>
-                <script>
-                  jQuery(document).ready(function ($) {
-                    $('.select2').select2();
-                  })
-                </script>
+
             </td>
         </tr>
+        <?php
+    }
+
+    ////////
+
+    protected static $has_triggered_select2 = false;
+
+    protected function maybe_trigger_select2() {
+        if ( static::$has_triggered_select2 ) {
+            add_action( 'admin_footer', [$this, 'trigger_select2'] );
+        }
+    }
+
+    public function trigger_select2() {
+        ?>
+        <script>
+          jQuery(document).ready(function ($) {
+            $('.select2').select2();
+          })
+        </script>
         <?php
     }
 }
