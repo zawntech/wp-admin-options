@@ -5,15 +5,11 @@ class AttachmentOption extends AbstractAdminOption
 {
     public function render() {
         $key = esc_attr( $this->args['key'] );
-        $label = esc_html( $this->args['label'] );
         $description = trim( $this->args['description'] );
         $multiple = $this->args['multiple'];
-
         ?>
         <tr id="<?= $key; ?>">
-            <th>
-                <label for="<?= $key; ?>"><?= $label; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
 
                 <button type="button" class="button" @click="openFrame()">Select Media</button>

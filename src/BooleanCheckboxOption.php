@@ -13,13 +13,10 @@ class BooleanCheckboxOption extends AbstractAdminOption
     public function render() {
         $key = esc_attr( $this->args['key'] );
         $value = $this->args['value'];
-        $label = esc_html( $this->args['label'] );
         $description = trim( $this->args['description'] );
         ?>
         <tr id="row-<?= $key; ?>">
-            <th>
-                <label for="<?= $key; ?>"><?= $label; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
                 <input type="checkbox" id="<?= $key; ?>" <?= $value ? 'checked="checked"' : ''; ?>>
                 <input type="hidden" name="<?= $key; ?>" value="<?= $value ? 1 : 0; ?>">

@@ -60,9 +60,7 @@ class PostTypeSelectOption extends AbstractAdminOption
         $key = esc_attr( $args['key'] );
         ?>
         <tr id="row-<?= $key; ?>">
-            <th>
-                <label for="<?= $args['key']; ?>"><?= $args['label']; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
                 <select
                     id="<?= $args['key']; ?>"
@@ -97,9 +95,7 @@ class PostTypeSelectOption extends AbstractAdminOption
         $key = esc_attr( $args['key'] );
         ?>
         <tr id="row-<?= $key; ?>">
-            <th>
-                <label for="<?= $args['key']; ?>"><?= $args['label']; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td id="<?= $args['key']; ?>-wrap">
                 <div class="post-control" style="display: flex; justify-content: space-between;">
                     <select

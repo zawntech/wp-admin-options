@@ -7,15 +7,12 @@ class TextareaOption extends AbstractAdminOption
         $readonly = $this->args['readonly'];
         $key = esc_attr( $this->args['key'] );
         $value = esc_textarea( $this->args['value'] );
-        $label = esc_html( $this->args['label'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
         $description = trim( $this->args['description'] );
         $rows = esc_attr( $this->args['rows'] );
         ?>
         <tr id="row-<?= $key; ?>">
-            <th>
-                <label for="<?= $key; ?>"><?= $label; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
                 <textarea
                     id="<?= $key; ?>"

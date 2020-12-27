@@ -6,13 +6,10 @@ class EditorOption extends AbstractAdminOption
     public function render() {
         $key = esc_attr( $this->args['key'] );
         $value = $this->args['value'];
-        $label = esc_html( $this->args['label'] );
         $description = trim( $this->args['description'] );
         ?>
         <tr id="row-<?= $key; ?>">
-            <th>
-                <label for="<?= $key; ?>"><?= $label; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
                 <?php
                 wp_editor( $value, $key );

@@ -7,14 +7,11 @@ class SelectOption extends AbstractAdminOption
         $value = $this->args['value'];
         $options = $this->args['options'];
         $key = esc_attr( $this->args['key'] );
-        $label = esc_html( $this->args['label'] );
         $description = trim( $this->args['description'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
         ?>
         <tr>
-            <th>
-                <label for="<?= $key; ?>"><?= $label; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
                 <select
                     id="<?= $key; ?>"

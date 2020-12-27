@@ -6,12 +6,9 @@ class ExampleJsonOption extends AbstractAdminOption
 {
     public function render() {
         $key = esc_attr( $this->args['key'] );
-        $label = esc_html( $this->args['label'] );
         ?>
         <tr id="<?= $key; ?>">
-            <th>
-                <label for="<?= $key; ?>"><?= $label; ?></label>
-            </th>
+            <?php $this->render_option_label(); ?>
             <td>
                 <?php $this->render_html(); ?>
                 <input type="hidden" name="<?= $key; ?>" :value="json">
