@@ -77,10 +77,10 @@ abstract class AbstractAdminOption
         $label = esc_attr( $this->args['label'] );
         $help = $this->args['help'];
         $help_text = sprintf( '<span class="help-text">%s</span>', $help );
-        $help_icon = empty( $help ) ?: sprintf( ' <a href="#" class="help"><span class="icon">?</span> %s</a>', $help_text );
+        $help_icon = empty( $help ) ? sprintf( ' <a href="#" class="help"><span class="icon">?</span> %s</a>', $help_text ) : '';
         ?>
         <th>
-            <label for="<?= $key; ?>"><?= $label; ?><?= $help_icon; ?></label>
+            <label for="<?= $key; ?>"><?= $label; ?><?= empty($help_icon) ? $help_icon: ''; ?></label>
         </th>
         <?php
 
