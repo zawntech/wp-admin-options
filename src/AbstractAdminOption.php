@@ -49,6 +49,7 @@ abstract class AbstractAdminOption
         $readonly = esc_html( $this->args['readonly'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
         $description = trim( $this->args['description'] );
+        do_action( 'before_admin_option', $key );
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
@@ -67,6 +68,7 @@ abstract class AbstractAdminOption
             </td>
         </tr>
         <?php
+        do_action( 'after_admin_option', $key );
     }
 
     /**
