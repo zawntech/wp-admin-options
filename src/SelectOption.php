@@ -3,7 +3,7 @@ namespace Zawntech\WPAdminOptions;
 
 class SelectOption extends AbstractAdminOption
 {
-    public function render() {
+    public function render_admin_table() {
         $value = $this->args['value'];
         $options = $this->args['options'];
         $key = esc_attr( $this->args['key'] );

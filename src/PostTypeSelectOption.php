@@ -6,7 +6,7 @@ class PostTypeSelectOption extends AbstractAdminOption
 {
     protected $option_args = [];
 
-    public function render() {
+    public function render_admin_table() {
         $multiple = $this->args['multiple'];
         if ( $multiple ) {
             $this->render_multiple();

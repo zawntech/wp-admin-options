@@ -7,6 +7,7 @@ abstract class AbstractAdminOption
     protected $args = [
 
         // General
+        'content' => 'admin-table',
         'value' => '',
         'type' => 'text',
         'key' => '_option_key',
@@ -43,6 +44,45 @@ abstract class AbstractAdminOption
     }
 
     public function render() {
+        switch ( $this->args['context'] ) {
+            case 'admin-table':
+                $this->render_admin_table();
+                break;
+
+            case 'taxonomy':
+                $this->render_taxonomy_field();
+                break;
+        }
+    }
+
+    public function render_taxonomy_field() {
+        $key = esc_attr( $this->args['key'] );
+        $type = esc_attr( $this->args['type'] );
+        $value = esc_attr( $this->args['value'] );
+        $readonly = esc_html( $this->args['readonly'] );
+        $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
+        $description = trim( $this->args['description'] );
+        do_action( 'before_admin_option', $key );
+        ?>
+        <div class="form-field" id="row-<?= $key; ?>">
+            <?php $this->render_option_label( false ); ?>
+            <input type="<?= $type; ?>"
+                   id="<?= $key; ?>"
+                   name="<?= $key; ?>"
+                   value="<?= $value; ?>"
+                   <?php if ( $readonly ) : ?>readonly="readonly"<?php endif; ?>
+                   class="<?= $css_classes; ?>">
+            <?php
+            if ( !empty( $description ) ) {
+                printf( '<p><code>%s</code></p>', $description );
+            }
+            ?>
+        </div>
+        <?php
+        do_action( 'after_admin_option', $key );
+    }
+
+    public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
         $type = esc_attr( $this->args['type'] );
         $value = esc_attr( $this->args['value'] );
@@ -74,17 +114,17 @@ abstract class AbstractAdminOption
     /**
      * Render the <th>...</th> option label HTML.
      */
-    public function render_option_label() {
+    public function render_option_label( $table = true ) {
         $key = esc_attr( $this->args['key'] );
         $label = esc_attr( $this->args['label'] );
         $help = $this->args['help'];
         $help_text = sprintf( '<span class="help-text">%s</span>', $help );
         $help_icon = empty( $help ) ? '' : sprintf( ' <a href="#" class="help"><span class="icon">?</span> %s</a>', $help_text );
+        echo $table ? '<th>' : '';
         ?>
-        <th>
-            <label for="<?= $key; ?>"><?= $label; ?><?= $help_icon; ?></label>
-        </th>
+        <label for="<?= $key; ?>"><?= $label; ?><?= $help_icon; ?></label>
         <?php
+        echo $table ? '</th>' : '';
 
         // Inject tooltip CSS.
         add_action( 'admin_footer', [$this, 'maybe_add_tooltip_assets'] );

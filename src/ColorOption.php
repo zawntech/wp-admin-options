@@ -4,7 +4,7 @@ namespace Zawntech\WPAdminOptions;
 
 class ColorOption extends AbstractAdminOption
 {
-    public function render() {
+    public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
         $value = $this->args['value'];
         $description = trim( $this->args['description'] );

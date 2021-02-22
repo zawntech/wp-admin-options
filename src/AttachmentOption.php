@@ -3,7 +3,7 @@ namespace Zawntech\WPAdminOptions;
 
 class AttachmentOption extends AbstractAdminOption
 {
-    public function render() {
+    public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
         $description = trim( $this->args['description'] );
         $multiple = $this->args['multiple'];

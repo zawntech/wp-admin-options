@@ -3,7 +3,7 @@ namespace Zawntech\WPAdminOptions;
 
 class TextareaOption extends AbstractAdminOption
 {
-    public function render() {
+    public function render_admin_table() {
         $readonly = $this->args['readonly'];
         $key = esc_attr( $this->args['key'] );
         $value = esc_textarea( $this->args['value'] );

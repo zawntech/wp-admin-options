@@ -4,7 +4,7 @@ namespace Zawntech\WPAdminOptions;
 
 class ExampleJsonOption extends AbstractAdminOption
 {
-    public function render() {
+    public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
         ?>
         <tr id="<?= $key; ?>">
