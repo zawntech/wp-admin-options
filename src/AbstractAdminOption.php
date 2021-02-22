@@ -7,7 +7,7 @@ abstract class AbstractAdminOption
     protected $args = [
 
         // General
-        'content' => 'admin-table',
+        'context' => 'admin-table',
         'value' => '',
         'type' => 'text',
         'key' => '_option_key',
