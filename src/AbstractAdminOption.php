@@ -18,6 +18,11 @@ abstract class AbstractAdminOption
         'readonly' => false,
         'help' => '',
 
+        // Number
+        'step' => '',
+        'min' => '',
+        'max' => '',
+
         // Textarea
         'rows' => 4,
 
@@ -55,24 +60,73 @@ abstract class AbstractAdminOption
         }
     }
 
-    public function render_taxonomy_field() {
+    /**
+     * Returns an array of key => value pairs as an HTML string.
+     * @param array $array
+     * @return string
+     */
+    protected function array_to_attributes( $array = [] ) {
+        $attributes_strings = [];
+        foreach ( $array as $key => $value ) {
+            if ( !empty( $value ) ) {
+                $attributes_strings[] = sprintf( '%s="%s"', $key, esc_attr( $value ) );
+            }
+        }
+        $attributes = implode( ' ', $attributes_strings );
+        return $attributes;
+    }
+
+    public function prepare_input_attributes() {
         $key = esc_attr( $this->args['key'] );
+        $min = esc_attr( $this->args['max'] );
+        $max = esc_attr( $this->args['min'] );
+        $step = esc_attr( $this->args['step'] );
         $type = esc_attr( $this->args['type'] );
         $value = esc_attr( $this->args['value'] );
         $readonly = esc_html( $this->args['readonly'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
+
+        // Prepare <input> tag attributes.
+        $input_attributes = [];
+        if ( !empty( $key ) ) {
+            $input_attributes['id'] = $key;
+            $input_attributes['name'] = $key;
+        }
+        if ( !empty( $type ) ) {
+            $input_attributes['type'] = $type;
+        }
+        if ( !empty( $value ) ) {
+            $input_attributes['value'] = $value;
+        }
+        if ( !empty( $readonly ) ) {
+            $input_attributes['readonly'] = 'readonly';
+        }
+        if ( !empty( $css_classes ) ) {
+            $input_attributes['class'] = $css_classes;
+        }
+        if ( !empty( $min ) ) {
+            $input_attributes['min'] = $min;
+        }
+        if ( !empty( $max ) ) {
+            $input_attributes['max'] = $max;
+        }
+        if ( !empty( $step ) ) {
+            $input_attributes['step'] = $step;
+        }
+
+        return $this->array_to_attributes( $input_attributes );
+    }
+
+    public function render_taxonomy_field() {
+        $key = esc_attr( $this->args['key'] );
         $description = trim( $this->args['description'] );
+        $input_attributes = $this->prepare_input_attributes();
         do_action( 'before_admin_option', $key );
         ?>
         <div class="form-field" id="row-<?= $key; ?>">
             <?php $this->render_option_label( false ); ?>
-            <input type="<?= $type; ?>"
-                   id="<?= $key; ?>"
-                   name="<?= $key; ?>"
-                   value="<?= $value; ?>"
-                   <?php if ( $readonly ) : ?>readonly="readonly"<?php endif; ?>
-                   class="<?= $css_classes; ?>">
             <?php
+            printf( '<input %s>', $input_attributes );
             if ( !empty( $description ) ) {
                 printf( '<p><code>%s</code></p>', $description );
             }
@@ -84,23 +138,14 @@ abstract class AbstractAdminOption
 
     public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
-        $type = esc_attr( $this->args['type'] );
-        $value = esc_attr( $this->args['value'] );
-        $readonly = esc_html( $this->args['readonly'] );
-        $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
-        $description = trim( $this->args['description'] );
+        $input_attributes = $this->prepare_input_attributes();
         do_action( 'before_admin_option', $key );
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
             <td>
-                <input type="<?= $type; ?>"
-                       id="<?= $key; ?>"
-                       name="<?= $key; ?>"
-                       value="<?= $value; ?>"
-                       <?php if ( $readonly ) : ?>readonly="readonly"<?php endif; ?>
-                       class="<?= $css_classes; ?>">
                 <?php
+                printf( '<input %s>', $input_attributes );
                 if ( !empty( $description ) ) {
                     printf( '<p><code>%s</code></p>', $description );
                 }
