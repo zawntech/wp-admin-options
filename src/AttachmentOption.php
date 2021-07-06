@@ -45,7 +45,7 @@ class AttachmentOption extends AbstractAdminOption
                             <div class="controls">
                                 <button type="button" class="button" :disabled="!canMoveUp(item.id)" @click="moveUp(item.id)">&#x25B2;</button>
                                 <button type="button" class="button" :disabled="!canMoveDown(item.id)" @click="moveDown(item.id)">&#x25BC;</button>
-                                <button type="button" class="button" @click="removeItem(item)">×</button>
+                                <button type="button" class="button" @click="removeItem(item.id)">×</button>
                             </div>
                         <?php endif; ?>
 
