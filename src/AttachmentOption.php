@@ -43,8 +43,8 @@ class AttachmentOption extends AbstractAdminOption
 
                         <?php if ( $multiple ) : ?>
                             <div class="controls">
-                                <button type="button" class="button" :disabled="!canMoveUp(item.id)" @click="moveUp(item)">&#x25B2;</button>
-                                <button type="button" class="button" :disabled="!canMoveDown(item.id)" @click="moveDown(item)">&#x25BC;</button>
+                                <button type="button" class="button" :disabled="!canMoveUp(item.id)" @click="moveUp(item.id)">&#x25B2;</button>
+                                <button type="button" class="button" :disabled="!canMoveDown(item.id)" @click="moveDown(item.id)">&#x25BC;</button>
                                 <button type="button" class="button" @click="removeItem(item)">×</button>
                             </div>
                         <?php endif; ?>
@@ -74,6 +74,9 @@ class AttachmentOption extends AbstractAdminOption
 
         $data = [];
         $ids = $this->args['value'];
+        $ids = array_map( function( $id ) {
+            return (int) $id;
+        }, $ids );
         if ( is_array( $ids ) ) {
             foreach( $ids as $id ) {
                 $data[] = wp_prepare_attachment_for_js( $id );
@@ -127,7 +130,7 @@ class AttachmentOption extends AbstractAdminOption
                   <?php endif; ?>
                   var attachments = frame.state().get('selection').toJSON();
                   for (var i in attachments) {
-                    var id = attachments[ i ].id;
+                    var id = Number(attachments[ i ].id);
                     if (-1 !== this.ids.indexOf(id)) {
                       continue;
                     }
@@ -138,21 +141,24 @@ class AttachmentOption extends AbstractAdminOption
                 },
 
                 removeItem: function (id) {
+                  id = Number(id);
                   this.ids.splice(this.ids.indexOf(id), 1);
                 },
 
                 canMoveUp: function (id) {
-                  console.log(id);
+                  id = Number(id);
                   var index = this.ids.indexOf(id);
                   return index > 0;
                 },
 
                 canMoveDown: function (id) {
+                  id = Number(id);
                   var index = this.ids.indexOf(id);
                   return index < this.ids.length - 1;
                 },
 
                 moveUp: function (id) {
+                  id = Number(id);
                   var index = this.ids.indexOf(id);
                   if (this.canMoveUp(id)) {
                     var prev = this.ids[ index - 1 ];
@@ -161,6 +167,7 @@ class AttachmentOption extends AbstractAdminOption
                 },
 
                 moveDown: function (id) {
+                  id = Number(id);
                   var index = this.ids.indexOf(id);
                   if (this.canMoveDown(id)) {
                     var next = this.ids[ index + 1 ];
