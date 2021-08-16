@@ -35,6 +35,7 @@ class SelectOption extends AbstractAdminOption
             </td>
         </tr>
         <?php
+        $this->maybe_trigger_select2();
     }
 
     ////////
@@ -42,7 +43,7 @@ class SelectOption extends AbstractAdminOption
     protected static $has_triggered_select2 = false;
 
     protected function maybe_trigger_select2() {
-        if ( static::$has_triggered_select2 ) {
+        if ( !static::$has_triggered_select2 ) {
             add_action( 'admin_footer', [$this, 'trigger_select2'] );
         }
     }
