@@ -82,7 +82,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                 ?>
                 <script>
                   jQuery(document).ready(function ($) {
-                    $('.select2').select2();
+                    $('<?= $key; ?> .select2').select2();
                   })
                 </script>
             </td>
@@ -93,6 +93,7 @@ class PostTypeSelectOption extends AbstractAdminOption
     public function render_multiple() {
         $args = $this->get_args();
         $key = esc_attr( $args['key'] );
+
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
@@ -146,6 +147,8 @@ class PostTypeSelectOption extends AbstractAdminOption
 
         ?>
         <script>
+
+          console.log({key: <?= $key; ?>})
           jQuery(document).ready(function ($) {
 
             var app = new Vue({
