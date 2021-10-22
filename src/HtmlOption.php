@@ -7,6 +7,7 @@ class HtmlOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         $value = $this->args['value'];
         $description = trim( $this->args['description'] );
+        $td_style = empty( $this->args['label'] ) ? 'padding-left: 0;' : '';
         do_action( 'before_admin_option', $key );
         ?>
         <tr id="row-<?= $key; ?>">
@@ -15,7 +16,7 @@ class HtmlOption extends AbstractAdminOption
                 $this->render_option_label();
             }
             ?>
-            <td style="padding-left: 0;">
+            <td style="<?= $td_style; ?>">
                 <?php
                 echo $value;
                 if ( !empty( $description ) ) {
@@ -27,5 +28,4 @@ class HtmlOption extends AbstractAdminOption
         <?php
         do_action( 'after_admin_option', $key );
     }
-
 }
