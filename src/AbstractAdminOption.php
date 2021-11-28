@@ -138,6 +138,7 @@ abstract class AbstractAdminOption
 
     public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
+        $description = trim( $this->args['description'] );
         $input_attributes = $this->prepare_input_attributes();
         do_action( 'before_admin_option', $key );
         ?>
