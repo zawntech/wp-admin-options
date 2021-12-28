@@ -38,6 +38,13 @@ abstract class AbstractAdminOption
         'post_type' => ['post'],
         'query_args' => [],
         'select_post_text' => 'Select post...',
+
+        // User select options
+        'role' => [],
+        'role__in' => [],
+        'meta_key' => '',
+        'meta_value' => '',
+        'meta_compare' => '',
     ];
 
     public function __construct( $args = [] ) {
