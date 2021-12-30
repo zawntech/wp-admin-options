@@ -190,16 +190,16 @@ class UserSelectOption extends AbstractAdminOption
                 formatPostTitle: function (postId, index) {
                   var count = (index+1),
                     postTitle = this.posts[postId],
-                    editPostUrl = '<?= admin_url(); ?>post.php?post=' + postId + '&action=edit',
-                    editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="link">[Edit]</a>',
-                    viewPostUrl = '<?= home_url(); ?>?p=' + postId,
-                    viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="link">[View]</a>';
+                    editPostUrl = '<?= admin_url(); ?>user-edit.php?user_id=' + postId + '&action=edit',
+                    editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="link">[Edit]</a>';
+                    // viewPostUrl = '<?= home_url(); ?>?p=' + postId,
+                    // viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="link">[View]</a>';
                   return [
                     '#' + count,
                     '-',
                     postTitle,
                     editPostLink,
-                    viewPostLink
+                    //viewPostLink
                   ].join(' ');
                 },
 
@@ -247,7 +247,6 @@ class UserSelectOption extends AbstractAdminOption
               },
 
               mounted: function () {
-
                 var select = $('#<?= $key; ?>.select2'),
                   self = this;
                 $('#<?= $key; ?>-wrap').fadeIn(function () {
