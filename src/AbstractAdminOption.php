@@ -135,7 +135,7 @@ abstract class AbstractAdminOption
             <?php
             printf( '<input %s>', $input_attributes );
             if ( !empty( $description ) ) {
-                printf( '<p><code>%s</code></p>', $description );
+                printf( '%s', $description );
             }
             ?>
         </div>
