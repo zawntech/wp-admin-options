@@ -82,7 +82,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                 ?>
                 <script>
                   jQuery(document).ready(function ($) {
-                    $('<?= $key; ?> .select2').select2();
+                    $('#<?= $key; ?>.select2').select2();
                   })
                 </script>
             </td>
