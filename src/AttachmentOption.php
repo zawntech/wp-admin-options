@@ -63,7 +63,8 @@ class AttachmentOption extends AbstractAdminOption
             </div>
         </div>
         <?php
-        $this->render_script();
+        add_action( 'admin_footer', [$this, 'render_style'] );
+        add_action( 'admin_footer', [$this, 'render_script'] );
     }
 
     public function render_admin_table() {
