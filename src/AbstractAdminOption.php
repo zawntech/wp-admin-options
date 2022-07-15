@@ -75,7 +75,7 @@ abstract class AbstractAdminOption
     protected function array_to_attributes( $array = [] ) {
         $attributes_strings = [];
         foreach ( $array as $key => $value ) {
-            if ( !empty( $value ) ) {
+            if ( !empty( $value ) || '0' === $value ) {
                 $attributes_strings[] = sprintf( '%s="%s"', $key, esc_attr( $value ) );
             }
         }
@@ -102,7 +102,7 @@ abstract class AbstractAdminOption
         if ( !empty( $type ) ) {
             $input_attributes['type'] = $type;
         }
-        if ( !empty( $value ) ) {
+        if ( !empty( $value ) || '0' === $value ) {
             $input_attributes['value'] = $value;
         }
         if ( !empty( $readonly ) ) {
