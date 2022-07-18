@@ -127,6 +127,7 @@ class ExampleJsonOption extends AbstractAdminOption
     }
 
     public function render_style() {
+        $key = $this->args['key'];
         ?>
         <style>
             #<?= $key; ?> .items .item {
