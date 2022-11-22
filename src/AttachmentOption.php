@@ -106,7 +106,7 @@ class AttachmentOption extends AbstractAdminOption
                         </div>
 
                         <div v-if="'Other' == getType(item)">
-                            {{ item.title }}
+                            <a :href="item.url" target="_blank">{{ item.title }}</a>
                         </div>
 
                         <span class="type">
