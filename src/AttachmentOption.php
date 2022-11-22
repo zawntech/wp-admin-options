@@ -36,10 +36,16 @@ class AttachmentOption extends AbstractAdminOption
                         </div>
 
                         <div v-if="'Other' == getType(item)">
-                            {{ item.title }}
+                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                                {{ item.title }}
+                            </a>
                         </div>
 
-                        <span class="type">{{ getType(item) }}</span>
+                        <span class="type">
+                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                                {{ getType(item) }}
+                            </a>
+                        </span>
 
                         <?php if ( $multiple ) : ?>
                             <div class="controls">
@@ -103,7 +109,12 @@ class AttachmentOption extends AbstractAdminOption
                             {{ item.title }}
                         </div>
 
-                        <span class="type">{{ getType(item) }}</span>
+                        <span class="type">
+                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                                {{ getType(item) }}
+                            </a>
+                        </span>
+
 
                         <?php if ( $multiple ) : ?>
                             <div class="controls">
