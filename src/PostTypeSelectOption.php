@@ -102,7 +102,8 @@ class PostTypeSelectOption extends AbstractAdminOption
                     <select
                         id="<?= $args['key']; ?>"
                         name="<?= $args['key']; ?>"
-                        class="<?= $args['css_classes']; ?> select2">
+                        class="<?= $args['css_classes']; ?>"
+                        v-model="selectedPost">
                         <?php
                         foreach ( $args['options'] as $_value => $label ) {
                             $selected = $args['value'] == $_value ? ' selected="selected"' : '';
@@ -144,7 +145,6 @@ class PostTypeSelectOption extends AbstractAdminOption
 
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
-
         ?>
         <script>
 
