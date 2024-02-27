@@ -17,6 +17,7 @@ abstract class AbstractAdminOption
         'default' => '',
         'readonly' => false,
         'help' => '',
+        'placeholder' => '',
 
         // Number
         'step' => '',
@@ -90,6 +91,7 @@ abstract class AbstractAdminOption
         $step = esc_attr( $this->args['step'] );
         $type = esc_attr( $this->args['type'] );
         $value = esc_attr( $this->args['value'] );
+        $placeholder = esc_attr( $this->args['placeholder'] );
         $readonly = esc_html( $this->args['readonly'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
 
@@ -119,6 +121,9 @@ abstract class AbstractAdminOption
         }
         if ( !empty( $step ) ) {
             $input_attributes['step'] = $step;
+        }
+        if ( !empty( $placeholder ) ) {
+            $input_attributes['placeholder'] = $placeholder;
         }
 
         return $this->array_to_attributes( $input_attributes );
