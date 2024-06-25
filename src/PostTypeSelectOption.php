@@ -82,7 +82,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                 ?>
                 <script>
                   jQuery(document).ready(function ($) {
-                    $('#<?= $key; ?>.select2').select2();
+                    $('tr#row-<?= $key; ?> .select2').select2();
                   })
                 </script>
             </td>
@@ -102,7 +102,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                     <select
                         id="<?= $args['key']; ?>"
                         name="<?= $args['key']; ?>"
-                        class="<?= $args['css_classes']; ?>"
+                        class="<?= $args['css_classes']; ?> select2"
                         v-model="selectedPost">
                         <?php
                         foreach ( $args['options'] as $_value => $label ) {
@@ -232,7 +232,7 @@ class PostTypeSelectOption extends AbstractAdminOption
 
               mounted: function () {
 
-                var select = $('#<?= $key; ?>.select2'),
+                var select = $('#<?= $key; ?>-wrap .select2'),
                   self = this;
                 $('#<?= $key; ?>-wrap').fadeIn(function () {
                   select.select2();
