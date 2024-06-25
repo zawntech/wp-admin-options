@@ -1,4 +1,5 @@
 <?php
+
 namespace Zawntech\WPAdminOptions;
 
 class SelectOption extends AbstractAdminOption
@@ -12,13 +13,13 @@ class SelectOption extends AbstractAdminOption
         ?>
         <tr>
             <?php $this->render_option_label(); ?>
-            <td>
+            <td id="<?= $key; ?>-wrap">
                 <select
                     id="<?= $key; ?>"
                     name="<?= $key; ?>"
                     class="<?= $css_classes; ?> select2">
                     <?php
-                    foreach( $options as $_value => $label ) {
+                    foreach ( $options as $_value => $label ) {
                         $selected = $value == $_value ? ' selected="selected"' : '';
                         $_value = esc_attr( $_value );
                         $label = esc_html( $label );
@@ -27,7 +28,7 @@ class SelectOption extends AbstractAdminOption
                     ?>
                 </select>
                 <?php
-                if ( ! empty( $description ) ) {
+                if ( !empty( $description ) ) {
                     printf( '<p><code>%s</code></p>', $description );
                 }
                 ?>
@@ -39,21 +40,17 @@ class SelectOption extends AbstractAdminOption
     }
 
     ////////
-
-    protected static $has_triggered_select2 = false;
-
     protected function maybe_trigger_select2() {
-        if ( !static::$has_triggered_select2 ) {
-            add_action( 'admin_footer', [$this, 'trigger_select2'] );
-        }
+        add_action( 'admin_footer', [$this, 'trigger_select2'] );
     }
 
     public function trigger_select2() {
+        $key = $this->args['key'];
         ?>
         <script>
           jQuery(document).ready(function ($) {
-            $('.select2').select2();
-          })
+            $('#<?= $key; ?>-wrap .select2').select2();
+          });
         </script>
         <?php
     }

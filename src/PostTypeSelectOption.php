@@ -61,7 +61,7 @@ class PostTypeSelectOption extends AbstractAdminOption
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
-            <td>
+            <td id="<?= $args['key']; ?>-wrap">
                 <select
                     id="<?= $args['key']; ?>"
                     name="<?= $args['key']; ?>"
@@ -82,7 +82,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                 ?>
                 <script>
                   jQuery(document).ready(function ($) {
-                    $('tr#row-<?= $key; ?> .select2').select2();
+                    $('#<?= $key; ?>-wrap .select2').select2();
                   })
                 </script>
             </td>
@@ -196,7 +196,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                     this.items.push(this.selectedPost);
                   }
                   this.selectedPost = '';
-                  $('#<?= $key; ?>.select2').val('').trigger('change');
+                  $('#<?= $key; ?>-wrap .select2').val('').trigger('change');
                 },
 
                 removeItem: function (item) {

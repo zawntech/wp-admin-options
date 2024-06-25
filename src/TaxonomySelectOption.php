@@ -58,7 +58,7 @@ class TaxonomySelectOption extends AbstractAdminOption
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
-            <td>
+            <td id="<?= $key; ?>-wrap">
                 <select
                     id="<?= $args['key']; ?>"
                     name="<?= $args['key']; ?>"
@@ -79,7 +79,7 @@ class TaxonomySelectOption extends AbstractAdminOption
                 ?>
                 <script>
                   jQuery(document).ready(function ($) {
-                    $('.select2').select2();
+                    $('#<?= $key; ?>-wrap .select2').select2();
                   })
                 </script>
             </td>
@@ -226,7 +226,7 @@ class TaxonomySelectOption extends AbstractAdminOption
 
               mounted: function () {
 
-                var select = $('#<?= $key; ?>.select2'),
+                var select = $('#<?= $key; ?>-wrap .select2'),
                   self = this;
                 $('#<?= $key; ?>-wrap').fadeIn(function () {
                   select.select2();
