@@ -14,9 +14,6 @@ class ColorOption extends AbstractAdminOption
             <td>
                 <input type="text" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
                 <?php
-
-                ?>
-                <?php
                 if ( !empty( $description ) ) {
                     printf( '<p><code>%s</code></p>', $description );
                 }

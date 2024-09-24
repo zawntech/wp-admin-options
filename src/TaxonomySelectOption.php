@@ -140,10 +140,12 @@ class TaxonomySelectOption extends AbstractAdminOption
 
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
-
+        $taxonomy = $this->args['taxonomy'];
         ?>
         <script>
           jQuery(document).ready(function ($) {
+
+            const taxonomy = <?= json_encode( $this->args['taxonomy'] ); ?>;
 
             var app = new Vue({
 
@@ -168,16 +170,16 @@ class TaxonomySelectOption extends AbstractAdminOption
                 formatPostTitle: function (postId, index) {
                   var count = (index+1),
                     postTitle = this.posts[postId],
-                    editPostUrl = '<?= admin_url(); ?>post.php?post=' + postId + '&action=edit',
+                    editPostUrl = `<?= admin_url(); ?>term.php?taxonomy=${taxonomy}&tag_ID=${postId}`,
                     editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="link">[Edit]</a>',
-                    viewPostUrl = '<?= home_url(); ?>?p=' + postId,
+                    viewPostUrl = `<?= home_url(); ?>?tax_query[0]taxonomy=${taxonomy}&tax_query[0]terms=${postId}`,
                     viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="link">[View]</a>';
                   return [
                     '#' + count,
                     '-',
                     postTitle,
                     editPostLink,
-                    viewPostLink
+                    // viewPostLink
                   ].join(' ');
                 },
 
