@@ -61,7 +61,7 @@ class PostTypeSelectOption extends AbstractAdminOption
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
-            <td>
+            <td id="<?= $args['key']; ?>-wrap">
                 <select
                     id="<?= $args['key']; ?>"
                     name="<?= $args['key']; ?>"
@@ -82,7 +82,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                 ?>
                 <script>
                   jQuery(document).ready(function ($) {
-                    $('<?= $key; ?> .select2').select2();
+                    $('#<?= $key; ?>-wrap .select2').select2();
                   })
                 </script>
             </td>
@@ -102,7 +102,8 @@ class PostTypeSelectOption extends AbstractAdminOption
                     <select
                         id="<?= $args['key']; ?>"
                         name="<?= $args['key']; ?>"
-                        class="<?= $args['css_classes']; ?> select2">
+                        class="<?= $args['css_classes']; ?> select2"
+                        v-model="selectedPost">
                         <?php
                         foreach ( $args['options'] as $_value => $label ) {
                             $selected = $args['value'] == $_value ? ' selected="selected"' : '';
@@ -144,7 +145,6 @@ class PostTypeSelectOption extends AbstractAdminOption
 
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
-
         ?>
         <script>
 
@@ -196,7 +196,7 @@ class PostTypeSelectOption extends AbstractAdminOption
                     this.items.push(this.selectedPost);
                   }
                   this.selectedPost = '';
-                  $('#<?= $key; ?>.select2').val('').trigger('change');
+                  $('#<?= $key; ?>-wrap .select2').val('').trigger('change');
                 },
 
                 removeItem: function (item) {
@@ -232,7 +232,7 @@ class PostTypeSelectOption extends AbstractAdminOption
 
               mounted: function () {
 
-                var select = $('#<?= $key; ?>.select2'),
+                var select = $('#<?= $key; ?>-wrap .select2'),
                   self = this;
                 $('#<?= $key; ?>-wrap').fadeIn(function () {
                   select.select2();

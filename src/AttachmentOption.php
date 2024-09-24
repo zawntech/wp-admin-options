@@ -36,10 +36,16 @@ class AttachmentOption extends AbstractAdminOption
                         </div>
 
                         <div v-if="'Other' == getType(item)">
-                            {{ item.title }}
+                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                                {{ item.title }}
+                            </a>
                         </div>
 
-                        <span class="type">{{ getType(item) }}</span>
+                        <span class="type">
+                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                                {{ getType(item) }}
+                            </a>
+                        </span>
 
                         <?php if ( $multiple ) : ?>
                             <div class="controls">
@@ -63,7 +69,8 @@ class AttachmentOption extends AbstractAdminOption
             </div>
         </div>
         <?php
-        $this->render_script();
+        add_action( 'admin_footer', [$this, 'render_style'] );
+        add_action( 'admin_footer', [$this, 'render_script'] );
     }
 
     public function render_admin_table() {
@@ -99,10 +106,15 @@ class AttachmentOption extends AbstractAdminOption
                         </div>
 
                         <div v-if="'Other' == getType(item)">
-                            {{ item.title }}
+                            <a :href="item.url" target="_blank">{{ item.title }}</a>
                         </div>
 
-                        <span class="type">{{ getType(item) }}</span>
+                        <span class="type">
+                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                                {{ getType(item) }}
+                            </a>
+                        </span>
+
 
                         <?php if ( $multiple ) : ?>
                             <div class="controls">

@@ -17,6 +17,7 @@ abstract class AbstractAdminOption
         'default' => '',
         'readonly' => false,
         'help' => '',
+        'placeholder' => '',
 
         // Number
         'step' => '',
@@ -38,6 +39,13 @@ abstract class AbstractAdminOption
         'post_type' => ['post'],
         'query_args' => [],
         'select_post_text' => 'Select post...',
+
+        // User select options
+        'role' => [],
+        'role__in' => [],
+        'meta_key' => '',
+        'meta_value' => '',
+        'meta_compare' => '',
     ];
 
     public function __construct( $args = [] ) {
@@ -68,7 +76,7 @@ abstract class AbstractAdminOption
     protected function array_to_attributes( $array = [] ) {
         $attributes_strings = [];
         foreach ( $array as $key => $value ) {
-            if ( !empty( $value ) ) {
+            if ( !empty( $value ) || '0' === $value ) {
                 $attributes_strings[] = sprintf( '%s="%s"', $key, esc_attr( $value ) );
             }
         }
@@ -83,6 +91,7 @@ abstract class AbstractAdminOption
         $step = esc_attr( $this->args['step'] );
         $type = esc_attr( $this->args['type'] );
         $value = esc_attr( $this->args['value'] );
+        $placeholder = esc_attr( $this->args['placeholder'] );
         $readonly = esc_html( $this->args['readonly'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
 
@@ -95,7 +104,7 @@ abstract class AbstractAdminOption
         if ( !empty( $type ) ) {
             $input_attributes['type'] = $type;
         }
-        if ( !empty( $value ) ) {
+        if ( !empty( $value ) || '0' === $value ) {
             $input_attributes['value'] = $value;
         }
         if ( !empty( $readonly ) ) {
@@ -113,6 +122,9 @@ abstract class AbstractAdminOption
         if ( !empty( $step ) ) {
             $input_attributes['step'] = $step;
         }
+        if ( !empty( $placeholder ) ) {
+            $input_attributes['placeholder'] = $placeholder;
+        }
 
         return $this->array_to_attributes( $input_attributes );
     }
@@ -128,7 +140,7 @@ abstract class AbstractAdminOption
             <?php
             printf( '<input %s>', $input_attributes );
             if ( !empty( $description ) ) {
-                printf( '<p><code>%s</code></p>', $description );
+                printf( '%s', $description );
             }
             ?>
         </div>
@@ -138,6 +150,7 @@ abstract class AbstractAdminOption
 
     public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
+        $description = trim( $this->args['description'] );
         $input_attributes = $this->prepare_input_attributes();
         do_action( 'before_admin_option', $key );
         ?>

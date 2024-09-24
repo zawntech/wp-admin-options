@@ -2,7 +2,7 @@
 
 namespace Zawntech\WPAdminOptions;
 
-class SelectOption extends AbstractAdminOption
+class UserSelectOption extends AbstractAdminOption
 {
     protected $option_args = [];
 
@@ -17,16 +17,45 @@ class SelectOption extends AbstractAdminOption
 
     public function get_args() {
 
-        if ( !empty( $this->option_args ) ) {
+        if ( ! empty( $this->option_args ) ) {
             return $this->option_args;
         }
 
         $value = $this->args['value'];
-        $options = $this->args['options'];
         $key = esc_attr( $this->args['key'] );
         $label = esc_html( $this->args['label'] );
         $description = trim( $this->args['description'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
+
+        // Prepare user args.
+        $user_args = wp_parse_args( [
+            'role' => $this->args['role'],
+            'role__in' => $this->args['role__in'],
+            'meta_key' => $this->args['meta_key'],
+            'meta_value' => $this->args['meta_value'],
+            'meta_compare' => $this->args['meta_compare'],
+        ] );
+
+        // Get users...
+        $users = get_users( $user_args );
+
+        // Prepare select options.
+        $select_label = 'Select user...';
+        $multiple = $this->args['multiple'];
+        if ( $multiple ) {
+            $select_label = 'Select users...';
+        }
+        $options = [
+            '' => $select_label
+        ];
+
+        foreach ( $users as $user ) {
+            $login = $user->user_login;
+            $email = $user->user_email;
+            $first = $user->first_name;
+            $last = $user->last_name;
+            $options[$user->ID] = "$login | $email | $first $last";
+        }
 
         $this->option_args = [
             'value' => $value,
@@ -34,29 +63,26 @@ class SelectOption extends AbstractAdminOption
             'label' => $label,
             'description' => $description,
             'css_classes' => $css_classes,
-            'options' => $options,
+            'options' => $options
         ];
 
         return $this->option_args;
     }
 
     public function render_single() {
-        $value = $this->args['value'];
-        $options = $this->args['options'];
-        $key = esc_attr( $this->args['key'] );
-        $description = trim( $this->args['description'] );
-        $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
+        $args = $this->get_args();
+        $key = esc_attr( $args['key'] );
         ?>
-        <tr>
+        <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
-            <td id="<?= $key; ?>-wrap">
+            <td id="<?= $args['key']; ?>-wrap">
                 <select
-                    id="<?= $key; ?>"
-                    name="<?= $key; ?>"
-                    class="<?= $css_classes; ?> select2">
+                    id="<?= $args['key']; ?>"
+                    name="<?= $args['key']; ?>"
+                    class="<?= $args['css_classes']; ?> select2">
                     <?php
-                    foreach ( $options as $_value => $label ) {
-                        $selected = $value == $_value ? ' selected="selected"' : '';
+                    foreach ( $args['options'] as $_value => $label ) {
+                        $selected = $args['value'] == $_value ? ' selected="selected"' : '';
                         $_value = esc_attr( $_value );
                         $label = esc_html( $label );
                         printf( '<option value="%s"%s>%s</option>', $_value, $selected, $label );
@@ -64,14 +90,18 @@ class SelectOption extends AbstractAdminOption
                     ?>
                 </select>
                 <?php
-                if ( !empty( $description ) ) {
-                    printf( '<p><code>%s</code></p>', $description );
+                if ( !empty( $args['description'] ) ) {
+                    printf( '<p><code>%s</code></p>', $args['description'] );
                 }
                 ?>
+                <script>
+                  jQuery(document).ready(function ($) {
+                    $('#<?= $key; ?>-wrap .select2').select2();
+                  })
+                </script>
             </td>
         </tr>
         <?php
-        $this->maybe_trigger_select2();
     }
 
     public function render_multiple() {
@@ -86,8 +116,7 @@ class SelectOption extends AbstractAdminOption
                     <select
                         id="<?= $args['key']; ?>"
                         name="<?= $args['key']; ?>"
-                        class="<?= $args['css_classes']; ?> select2"
-                        v-model="selectedPost">
+                        class="<?= $args['css_classes']; ?> select2">
                         <?php
                         foreach ( $args['options'] as $_value => $label ) {
                             $selected = $args['value'] == $_value ? ' selected="selected"' : '';
@@ -102,11 +131,11 @@ class SelectOption extends AbstractAdminOption
                 <hr>
                 <div class="items">
                     <p v-if="!items.length">
-                        No items have been selected.
+                        No users have been selected.
                     </p>
                     <div v-for="item, i in items" class="item" :key="item">
 
-                        <span v-html="formatPostTitle(item)"></span>
+                        <span v-html="formatPostTitle(item, i)"></span>
 
                         <div class="controls">
                             <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
@@ -129,13 +158,18 @@ class SelectOption extends AbstractAdminOption
 
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
+
         ?>
         <script>
+
+          console.log({key: <?= $key; ?>})
           jQuery(document).ready(function ($) {
 
             var app = new Vue({
 
               el: '#<?= $key; ?>-wrap',
+
+              name: 'SelectUsers',
 
               data: function () {
                 return {
@@ -154,19 +188,31 @@ class SelectOption extends AbstractAdminOption
               methods: {
 
                 formatPostTitle: function (postId, index) {
-                  return this.posts[postId];
+                  var count = (index+1),
+                    postTitle = this.posts[postId],
+                    editPostUrl = '<?= admin_url(); ?>user-edit.php?user_id=' + postId + '&action=edit',
+                    editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="link">[Edit]</a>';
+                    // viewPostUrl = '<?= home_url(); ?>?p=' + postId,
+                    // viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="link">[View]</a>';
+                  return [
+                    '#' + count,
+                    '-',
+                    postTitle,
+                    editPostLink,
+                    //viewPostLink
+                  ].join(' ');
                 },
 
                 addItem: function () {
                   if ( '' === this.selectedPost ) {
-                    alert('Please select a post to add.');
+                    alert('Please select a user to add.');
                     return;
                   }
                   if ( -1 === this.items.indexOf(this.selectedPost) ) {
                     this.items.push(this.selectedPost);
                   }
                   this.selectedPost = '';
-                  $('#<?= $key; ?>-wrap .select2').val('').trigger('change');
+                  $('#<?= $key; ?>.select2').val('').trigger('change');
                 },
 
                 removeItem: function (item) {
@@ -201,7 +247,6 @@ class SelectOption extends AbstractAdminOption
               },
 
               mounted: function () {
-
                 var select = $('#<?= $key; ?>-wrap .select2'),
                   self = this;
                 $('#<?= $key; ?>-wrap').fadeIn(function () {
@@ -246,23 +291,6 @@ class SelectOption extends AbstractAdminOption
                 display: none;
             }
         </style>
-        <?php
-    }
-
-
-    ////////
-    protected function maybe_trigger_select2() {
-        add_action( 'admin_footer', [$this, 'trigger_select2'] );
-    }
-
-    public function trigger_select2() {
-        $key = $this->args['key'];
-        ?>
-        <script>
-          jQuery(document).ready(function ($) {
-            $('#<?= $key; ?>-wrap .select2').select2();
-          });
-        </script>
         <?php
     }
 }

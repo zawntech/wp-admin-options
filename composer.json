@@ -2,11 +2,11 @@
     "name": "zawntech/wp-admin-options",
     "description": "A library of custom WordPress admin option classes.",
     "type": "library",
-    "license": "GPLv2",
+    "license": "MIT",
     "authors": [
         {
             "name": "Marty Eason",
-            "email": "meason@zawntech.com"
+            "email": "dev@allegedwizard.com"
         }
     ],
     "minimum-stability": "dev",
