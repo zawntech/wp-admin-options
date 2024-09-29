@@ -74,6 +74,7 @@ class ColorOption extends AbstractAdminOption
                   showInput: true,
                   showAlpha: true,
                   preferredFormat: 'hex',
+                  allowEmpty: true,
                 });
               });
             </script>
