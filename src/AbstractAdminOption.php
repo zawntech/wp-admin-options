@@ -86,8 +86,8 @@ abstract class AbstractAdminOption
 
     public function prepare_input_attributes() {
         $key = esc_attr( $this->args['key'] );
-        $min = esc_attr( $this->args['max'] );
-        $max = esc_attr( $this->args['min'] );
+        $min = esc_attr( $this->args['min'] );
+        $max = esc_attr( $this->args['max'] );
         $step = esc_attr( $this->args['step'] );
         $type = esc_attr( $this->args['type'] );
         $value = esc_attr( $this->args['value'] );
