@@ -113,7 +113,7 @@ abstract class AbstractAdminOption
         if ( !empty( $css_classes ) ) {
             $input_attributes['class'] = $css_classes;
         }
-        if ( !empty( $min ) ) {
+        if ( !empty( $min ) && '0' !== $min && 0 !== $min ) {
             $input_attributes['min'] = $min;
         }
         if ( !empty( $max ) ) {
