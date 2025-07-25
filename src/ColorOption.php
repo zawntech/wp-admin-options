@@ -30,7 +30,7 @@ class ColorOption extends AbstractAdminOption
         $color_picker_type = $this->args['type'] ?? '';
 
         if ( empty( $color_picker_type ) || 'default' === $color_picker_type ) {
-            $this->default_color_picker_type();
+            $this->color_picker_type_default();
         }
 
         if ( 'spectrum' === $color_picker_type ) {
