@@ -40,9 +40,7 @@ class DatetimeOption extends AbstractAdminOption
         <script>
           jQuery(document).ready(function ($) {
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>',
+            var app = Vue.createApp({
 
               mounted: function () {
                 $('#<?= $key; ?> .option-wrap').fadeIn();
@@ -64,7 +62,7 @@ class DatetimeOption extends AbstractAdminOption
 
               methods: {
               }
-            });
+            }).mount('#<?= $key; ?>');
           });
         </script>
         <?php

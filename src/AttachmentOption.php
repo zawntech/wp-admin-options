@@ -164,9 +164,7 @@ class AttachmentOption extends AbstractAdminOption
 
             var frame;
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>',
+            var app = Vue.createApp({
 
               data: function () {
                 return {
@@ -283,7 +281,7 @@ class AttachmentOption extends AbstractAdminOption
                   });
                 }
               }
-            });
+            }).mount('#<?= $key; ?>');
           });
         </script>
         <?php

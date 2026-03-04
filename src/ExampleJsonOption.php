@@ -57,9 +57,7 @@ class ExampleJsonOption extends AbstractAdminOption
         <script>
           jQuery(document).ready(function ($) {
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>',
+            var app = Vue.createApp({
 
               mounted: function () {
                 $('#<?= $key; ?> .option-wrap').fadeIn();
@@ -120,7 +118,7 @@ class ExampleJsonOption extends AbstractAdminOption
                   }
                 },
               }
-            });
+            }).mount('#<?= $key; ?>');
           });
         </script>
         <?php

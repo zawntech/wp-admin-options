@@ -76,9 +76,7 @@ class ExampleJsonMediaOption extends AbstractAdminOption
 
             var frame;
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>',
+            var app = Vue.createApp({
 
               mounted: function () {
                 $('#<?= $key; ?> .option-wrap').fadeIn();
@@ -174,7 +172,7 @@ class ExampleJsonMediaOption extends AbstractAdminOption
                   }
                 },
               }
-            });
+            }).mount('#<?= $key; ?>');
           });
         </script>
         <?php

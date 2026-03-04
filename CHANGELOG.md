@@ -9,7 +9,9 @@ All notable changes to this project will be documented in this file.
 - Auto-initialization of assets via `AbstractAdminOption` on first use
 
 ### Changed
-- Upgraded from Vue.js 2 to Vue.js 3
+- Upgraded from Vue.js 2 to Vue.js 3 (`new Vue()` → `Vue.createApp().mount()`)
+- Migrated all option classes to Vue 3 compatible syntax: SelectOption, PostTypeSelectOption, TaxonomySelectOption, UserSelectOption, AttachmentOption, DateTimeOption, DurationOption, ExampleJsonOption, ExampleJsonMediaOption
+- Fixed `v-for` destructuring to use parenthesized syntax (`v-for="(item, i) in items"`)
 
 ## [1.0.0]
 

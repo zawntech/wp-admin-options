@@ -115,7 +115,7 @@ class TaxonomySelectOption extends AbstractAdminOption
                     <p v-if="!items.length">
                         No <?= strtolower( $this->get_taxonomy_label('plural') ); ?> have been selected.
                     </p>
-                    <div v-for="item, i in items" class="item" :key="item">
+                    <div v-for="(item, i) in items" class="item" :key="item">
 
                         <span v-html="formatPostTitle(item, i)"></span>
 
@@ -147,9 +147,7 @@ class TaxonomySelectOption extends AbstractAdminOption
 
             const taxonomy = <?= json_encode( $this->args['taxonomy'] ); ?>;
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>-wrap',
+            var app = Vue.createApp({
 
               data: function () {
                 return {
@@ -237,7 +235,7 @@ class TaxonomySelectOption extends AbstractAdminOption
                   });
                 });
               }
-            });
+            }).mount('#<?= $key; ?>-wrap');
           })
         </script>
         <style>

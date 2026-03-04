@@ -133,7 +133,7 @@ class UserSelectOption extends AbstractAdminOption
                     <p v-if="!items.length">
                         No users have been selected.
                     </p>
-                    <div v-for="item, i in items" class="item" :key="item">
+                    <div v-for="(item, i) in items" class="item" :key="item">
 
                         <span v-html="formatPostTitle(item, i)"></span>
 
@@ -165,9 +165,7 @@ class UserSelectOption extends AbstractAdminOption
           console.log({key: <?= $key; ?>})
           jQuery(document).ready(function ($) {
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>-wrap',
+            var app = Vue.createApp({
 
               name: 'SelectUsers',
 
@@ -256,7 +254,7 @@ class UserSelectOption extends AbstractAdminOption
                   });
                 });
               }
-            });
+            }).mount('#<?= $key; ?>-wrap');
           })
         </script>
         <style>

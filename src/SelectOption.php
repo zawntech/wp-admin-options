@@ -104,7 +104,7 @@ class SelectOption extends AbstractAdminOption
                     <p v-if="!items.length">
                         No items have been selected.
                     </p>
-                    <div v-for="item, i in items" class="item" :key="item">
+                    <div v-for="(item, i) in items" class="item" :key="item">
 
                         <span v-html="formatPostTitle(item)"></span>
 
@@ -133,9 +133,7 @@ class SelectOption extends AbstractAdminOption
         <script>
           jQuery(document).ready(function ($) {
 
-            var app = new Vue({
-
-              el: '#<?= $key; ?>-wrap',
+            var app = Vue.createApp({
 
               data: function () {
                 return {
@@ -211,7 +209,7 @@ class SelectOption extends AbstractAdminOption
                   });
                 });
               }
-            });
+            }).mount('#<?= $key; ?>-wrap');
           })
         </script>
         <style>
