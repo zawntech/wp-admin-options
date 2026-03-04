@@ -15,7 +15,6 @@ class ExampleJsonOption extends AbstractAdminOption
             </td>
         </tr>
         <?php
-        add_action( 'admin_footer', [$this, 'render_style'] );
         add_action( 'admin_footer', [$this, 'render_script'] );
     }
 
@@ -27,22 +26,40 @@ class ExampleJsonOption extends AbstractAdminOption
 
             <hr>
 
-            <div class="items">
+            <div class="wao-items">
 
                 <p v-if="!items.length">No example items are assigned.</p>
 
-                <div v-for="item in items" class="item">
+                <div v-for="(item, i) in items" class="wao-item"
+                     :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
+                     draggable="true"
+                     @dragstart="dragStart(i, $event)"
+                     @dragover.prevent="dragOver(i)"
+                     @drop="drop(i)"
+                     @dragend="dragEnd">
 
-                    <div class="fields">
-                        <input title="First Name" type="text" placeholder="Day" v-model="item.day" class="widefat">
-                        <input title="Last Name" type="text" placeholder="Time" v-model="item.time" class="widefat">
-                        <textarea title="Description" placeholder="Description" v-model="item.description" class="widefat"></textarea>
+                    <div class="wao-item-row">
+                        <span class="wao-drag-handle" title="Drag to reorder">&#x2630;</span>
+                        <div class="wao-controls">
+                            <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
+                            <button type="button" class="button" :disabled="!canMoveDown(item)" @click="moveDown(item)">&#x25BC;</button>
+                            <button type="button" class="button" @click="removeItem(item)">×</button>
+                        </div>
                     </div>
 
-                    <div class="controls">
-                        <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
-                        <button type="button" class="button" :disabled="!canMoveDown(item)" @click="moveDown(item)">&#x25BC;</button>
-                        <button type="button" class="button" @click="removeItem(item)">×</button>
+                    <div class="wao-json-fields">
+                        <label class="wao-field">
+                            <span class="wao-field-label">Day</span>
+                            <input type="text" placeholder="Day" v-model="item.day" class="widefat">
+                        </label>
+                        <label class="wao-field">
+                            <span class="wao-field-label">Time</span>
+                            <input type="text" placeholder="Time" v-model="item.time" class="widefat">
+                        </label>
+                        <label class="wao-field">
+                            <span class="wao-field-label">Description</span>
+                            <textarea placeholder="Description" v-model="item.description" class="widefat"></textarea>
+                        </label>
                     </div>
 
                 </div>
@@ -65,7 +82,9 @@ class ExampleJsonOption extends AbstractAdminOption
 
               data: function () {
                 return {
-                  items: <?= json_encode( $this->args['value'] ); ?>
+                  items: <?= json_encode( $this->args['value'] ); ?>,
+                  dragIndex: null,
+                  dragOverIndex: null,
                 }
               },
 
@@ -117,6 +136,25 @@ class ExampleJsonOption extends AbstractAdminOption
                     this.items.splice(index, 2, next, item);
                   }
                 },
+
+                dragStart: function (index, event) {
+                  this.dragIndex = index;
+                  event.dataTransfer.effectAllowed = 'move';
+                },
+                dragOver: function (index) {
+                  this.dragOverIndex = index;
+                },
+                drop: function (index) {
+                  if (this.dragIndex === null || this.dragIndex === index) return;
+                  var item = this.items.splice(this.dragIndex, 1)[0];
+                  this.items.splice(index, 0, item);
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
+                dragEnd: function () {
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
               }
             }).mount('#<?= $key; ?>');
           });
@@ -124,25 +162,4 @@ class ExampleJsonOption extends AbstractAdminOption
         <?php
     }
 
-    public function render_style() {
-        $key = $this->args['key'];
-        ?>
-        <style>
-            #<?= $key; ?> .items .item {
-                margin-bottom: 5px;
-                padding: 5px;
-                border: 1px dashed #D2D2D2;
-            }
-
-            #<?= $key; ?> .item .controls {
-                padding-top: 5px;
-                text-align: right;
-            }
-
-            #<?= $key; ?> .option-wrap {
-                display: none;
-            }
-        </style>
-        <?php
-    }
 }

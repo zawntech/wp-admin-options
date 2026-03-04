@@ -14,10 +14,11 @@ abstract class AbstractAdminOption
         'type' => 'text',
         'key' => '_option_key',
         'label' => 'Option Label',
-        'css_classes' => ['widefat'],
+        'css_classes' => ['widefat', 'wao-input'],
         'description' => '',
         'default' => '',
         'readonly' => false,
+        'enable_copy' => null,
         'help' => '',
         'placeholder' => '',
 
@@ -64,6 +65,8 @@ abstract class AbstractAdminOption
     }
 
     public function render() {
+        $key = esc_attr( $this->args['key'] );
+        do_action( 'before_admin_option', $key );
         switch ( $this->args['context'] ) {
             case 'admin-table':
                 $this->render_admin_table();
@@ -73,6 +76,7 @@ abstract class AbstractAdminOption
                 $this->render_taxonomy_field();
                 break;
         }
+        do_action( 'after_admin_option', $key );
     }
 
     /**
@@ -136,36 +140,87 @@ abstract class AbstractAdminOption
         return $this->array_to_attributes( $input_attributes );
     }
 
+    /**
+     * Whether the copy button should be shown for this input.
+     */
+    protected function should_enable_copy() {
+        $enable_copy = $this->args['enable_copy'];
+        if ( null !== $enable_copy ) {
+            return (bool) $enable_copy;
+        }
+        return ! empty( $this->args['readonly'] );
+    }
+
+    protected function render_copy_button( $key ) {
+        ?>
+        <button type="button" class="wao-copy-btn" data-copy-target="<?= $key; ?>" title="Copy to clipboard">
+            <span class="wao-copy-icon">&#x2398;</span>
+            <span class="wao-copy-done" style="display:none;">&#x2713;</span>
+        </button>
+        <script>
+        (function(){
+            var btn = document.querySelector('[data-copy-target="<?= $key; ?>"]');
+            if (!btn) return;
+            btn.addEventListener('click', function() {
+                var input = document.getElementById('<?= $key; ?>');
+                if (!input) return;
+                navigator.clipboard.writeText(input.value).then(function() {
+                    btn.querySelector('.wao-copy-icon').style.display = 'none';
+                    btn.querySelector('.wao-copy-done').style.display = '';
+                    setTimeout(function() {
+                        btn.querySelector('.wao-copy-icon').style.display = '';
+                        btn.querySelector('.wao-copy-done').style.display = 'none';
+                    }, 1500);
+                });
+            });
+        })();
+        </script>
+        <?php
+    }
+
     public function render_taxonomy_field() {
         $key = esc_attr( $this->args['key'] );
         $description = trim( $this->args['description'] );
         $input_attributes = $this->prepare_input_attributes();
-        do_action( 'before_admin_option', $key );
+        $show_copy = $this->should_enable_copy();
         ?>
         <div class="form-field" id="row-<?= $key; ?>">
             <?php $this->render_option_label( false ); ?>
+            <?php if ( $show_copy ) : ?>
+            <div class="wao-copy-wrap">
+                <?php printf( '<input %s>', $input_attributes ); ?>
+                <?php $this->render_copy_button( $key ); ?>
+            </div>
+            <?php else : ?>
+            <?php printf( '<input %s>', $input_attributes ); ?>
+            <?php endif; ?>
             <?php
-            printf( '<input %s>', $input_attributes );
             if ( !empty( $description ) ) {
                 printf( '%s', $description );
             }
             ?>
         </div>
         <?php
-        do_action( 'after_admin_option', $key );
     }
 
     public function render_admin_table() {
         $key = esc_attr( $this->args['key'] );
         $description = trim( $this->args['description'] );
         $input_attributes = $this->prepare_input_attributes();
-        do_action( 'before_admin_option', $key );
+        $show_copy = $this->should_enable_copy();
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
             <td>
+                <?php if ( $show_copy ) : ?>
+                <div class="wao-copy-wrap">
+                    <?php printf( '<input %s>', $input_attributes ); ?>
+                    <?php $this->render_copy_button( $key ); ?>
+                </div>
+                <?php else : ?>
+                <?php printf( '<input %s>', $input_attributes ); ?>
+                <?php endif; ?>
                 <?php
-                printf( '<input %s>', $input_attributes );
                 if ( !empty( $description ) ) {
                     printf( '<p><code>%s</code></p>', $description );
                 }
@@ -173,7 +228,6 @@ abstract class AbstractAdminOption
             </td>
         </tr>
         <?php
-        do_action( 'after_admin_option', $key );
     }
 
     /**
@@ -183,78 +237,12 @@ abstract class AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         $label = esc_attr( $this->args['label'] );
         $help = $this->args['help'];
-        $help_text = sprintf( '<span class="help-text">%s</span>', $help );
-        $help_icon = empty( $help ) ? '' : sprintf( ' <a href="#" class="help"><span class="icon">?</span> %s</a>', $help_text );
+        $help_text = sprintf( '<span class="wao-help-text">%s</span>', $help );
+        $help_icon = empty( $help ) ? '' : sprintf( ' <a href="#" class="wao-help">?%s</a>', $help_text );
         echo $table ? '<th>' : '';
         ?>
         <label for="<?= $key; ?>"><?= $label; ?><?= $help_icon; ?></label>
         <?php
         echo $table ? '</th>' : '';
-
-        // Inject tooltip CSS.
-        add_action( 'admin_footer', [$this, 'maybe_add_tooltip_assets'] );
-    }
-
-    protected static $tooltip_assets_loaded = false;
-
-    public function maybe_add_tooltip_assets() {
-        if ( static::$tooltip_assets_loaded ) {
-            return;
-        }
-        $this->render_tooltip_assets();
-        static::$tooltip_assets_loaded = true;
-    }
-
-    /**
-     * Tool tip CSS.
-     */
-    protected function render_tooltip_assets() {
-        ?>
-        <style>
-            .help {
-                top: 3px;
-                left: 5px;
-                width: 17px;
-                height: 17px;
-                color: white;
-                border-radius: 50%;
-                position: relative;
-                display: inline-block;
-                text-decoration: none;
-                background-color: #565656;
-            }
-
-            .help .help-text {
-                display: none;
-                padding: 10px;
-                font-size: 12px;
-                margin-top: 24px;
-                max-width: 320px;
-                width: max-content;
-                position: absolute;
-                background-color: #4e4e4e;
-                -webkit-box-shadow: 10px 10px 26px 0px rgba(0, 0, 0, 0.35);
-                -moz-box-shadow: 10px 10px 26px 0px rgba(0, 0, 0, 0.35);
-                box-shadow: 10px 10px 26px 0px rgba(0, 0, 0, 0.35);
-                border: 1px solid #454545;
-                z-index: 999999;
-            }
-
-            .help:hover {
-                color: white;
-            }
-
-            .help:hover .help-text {
-                display: block;
-            }
-
-            .help .icon {
-                left: 5px;
-                top: -1px;
-                font-weight: bold;
-                position: absolute;
-            }
-        </style>
-        <?php
     }
 }

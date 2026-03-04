@@ -15,13 +15,12 @@ class DatetimeOption extends AbstractAdminOption
             </td>
         </tr>
         <?php
-        add_action( 'admin_footer', [$this, 'render_style'] );
         add_action( 'admin_footer', [$this, 'render_script'] );
     }
 
     public function render_html() {
         ?>
-        <div class="datetime-option">
+        <div class="wao-datetime">
             <input type="date" v-model="date" required>
             <input type="time" v-model="time" required>
         </div>
@@ -68,13 +67,4 @@ class DatetimeOption extends AbstractAdminOption
         <?php
     }
 
-    public function render_style() {
-        ?>
-        <style>
-            .datetime-option {
-                display: flex;
-            }
-        </style>
-        <?php
-    }
 }

@@ -1,0 +1,1029 @@
+/**
+ * WP Admin Options Stylesheet
+ *
+ * Modern Tailwind UI-inspired styling for WordPress admin option controls.
+ * Utility prefix: .wao- (WP Admin Options)
+ */
+
+/* ==========================================================================
+   CSS Custom Properties
+   ========================================================================== */
+
+:root {
+    --wao-border: #d1d5db;
+    --wao-border-focus: #3b82f6;
+    --wao-ring: rgba(59, 130, 246, 0.15);
+    --wao-bg: #ffffff;
+    --wao-bg-muted: #f9fafb;
+    --wao-text: #111827;
+    --wao-text-muted: #6b7280;
+    --wao-text-placeholder: #9ca3af;
+    --wao-radius: 6px;
+    --wao-radius-lg: 8px;
+    --wao-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --wao-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --wao-transition: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   Form Controls – Inputs, Textareas, Selects
+   ========================================================================== */
+
+.wao-input {
+    display: block !important;
+    width: 100% !important;
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+.wao-input:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.wao-input::placeholder {
+    color: var(--wao-text-placeholder) !important;
+}
+
+.wao-input[readonly] {
+    background-color: var(--wao-bg-muted) !important;
+    cursor: default !important;
+    opacity: 0.7 !important;
+}
+
+/* ==========================================================================
+   Copy Button – attached to right side of input
+   ========================================================================== */
+
+.wao-copy-wrap {
+    display: flex !important;
+    align-items: stretch !important;
+    position: relative !important;
+}
+
+.wao-copy-wrap .wao-input {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.wao-copy-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 40px !important;
+    padding: 0 12px !important;
+    font-size: 16px !important;
+    color: var(--wao-text-muted) !important;
+    background-color: var(--wao-bg-muted) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-left: none !important;
+    border-top-right-radius: var(--wao-radius) !important;
+    border-bottom-right-radius: var(--wao-radius) !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+}
+
+.wao-copy-btn:hover {
+    background-color: #e5e7eb !important;
+    color: var(--wao-text) !important;
+}
+
+.wao-copy-btn:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: 0 0 0 3px var(--wao-ring) !important;
+    z-index: 1 !important;
+}
+
+.wao-copy-btn .wao-copy-done {
+    color: #16a34a !important;
+    font-weight: 600 !important;
+}
+
+/* Select element with dropdown arrow */
+select.wao-input {
+    padding-right: 36px !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 10px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 16px 16px !important;
+}
+
+/* Textarea specific */
+textarea.wao-input {
+    resize: vertical !important;
+    min-height: 80px !important;
+}
+
+/* ==========================================================================
+   Inputs within wao- containers (Vue-driven fields without .wao-input class)
+   ========================================================================== */
+
+.wao-datetime input[type="date"],
+.wao-datetime input[type="time"],
+.wao-duration select,
+.wao-json-fields input[type="text"],
+.wao-json-fields textarea {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+}
+
+.wao-datetime input[type="date"]:focus,
+.wao-datetime input[type="time"]:focus,
+.wao-duration select:focus,
+.wao-json-fields input[type="text"]:focus,
+.wao-json-fields textarea:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.wao-json-fields textarea {
+    resize: vertical !important;
+    min-height: 60px !important;
+}
+
+/* Duration select arrow */
+.wao-duration select {
+    padding-right: 32px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") !important;
+    background-position: right 8px center !important;
+    background-repeat: no-repeat !important;
+    background-size: 16px 16px !important;
+}
+
+/* ==========================================================================
+   Checkbox – Modern Toggle Switch
+   ========================================================================== */
+
+input[type="checkbox"].wao-toggle {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    position: relative !important;
+    display: inline-block !important;
+    width: 44px !important;
+    height: 24px !important;
+    min-width: 44px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 12px !important;
+    background-color: #d1d5db !important;
+    cursor: pointer !important;
+    transition: background-color var(--wao-transition) !important;
+    vertical-align: middle !important;
+    box-shadow: none !important;
+}
+
+input[type="checkbox"].wao-toggle::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 2px !important;
+    left: 2px !important;
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 50% !important;
+    background-color: white !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+    transition: transform var(--wao-transition) !important;
+    transform: translateX(0) !important;
+}
+
+input[type="checkbox"].wao-toggle:checked {
+    background-color: var(--wao-border-focus) !important;
+}
+
+input[type="checkbox"].wao-toggle:checked::before {
+    transform: translateX(25px) !important;
+    top: 5px !important;
+}
+
+input[type="checkbox"].wao-toggle:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px var(--wao-ring) !important;
+}
+
+/* ==========================================================================
+   Buttons – Base style for all .button inside wao- contexts
+   ========================================================================== */
+
+.wao-vue-wrap .button,
+.wao-post-control .button,
+.wao-image-field .button,
+.wao-action-group .button,
+.wao-duration .button,
+.example-json-option-wrap > .button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+}
+
+.wao-vue-wrap .button:hover,
+.wao-post-control .button:hover,
+.wao-image-field .button:hover,
+.wao-action-group .button:hover,
+.wao-duration .button:hover,
+.example-json-option-wrap > .button:hover {
+    background-color: var(--wao-bg-muted) !important;
+    border-color: #b0b6bf !important;
+}
+
+.wao-vue-wrap .button:focus,
+.wao-post-control .button:focus,
+.wao-image-field .button:focus,
+.wao-action-group .button:focus,
+.wao-duration .button:focus,
+.example-json-option-wrap > .button:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+/* Action group – compact button group for top-level actions (Select Media + Clear, etc.) */
+.wao-action-group {
+    display: inline-flex !important;
+    gap: 0 !important;
+    margin-bottom: 4px !important;
+}
+
+.wao-action-group .button {
+    border-radius: 0 !important;
+    margin-left: -1px !important;
+}
+
+.wao-action-group .button:first-child {
+    margin-left: 0 !important;
+    border-top-left-radius: var(--wao-radius) !important;
+    border-bottom-left-radius: var(--wao-radius) !important;
+}
+
+.wao-action-group .button:last-child {
+    border-top-right-radius: var(--wao-radius) !important;
+    border-bottom-right-radius: var(--wao-radius) !important;
+}
+
+.wao-action-group .button:hover {
+    z-index: 1 !important;
+}
+
+.wao-action-group .button:focus {
+    z-index: 2 !important;
+}
+
+/* ==========================================================================
+   Controls – Compact Button Group
+   ========================================================================== */
+
+.wao-controls {
+    display: inline-flex !important;
+    gap: 0 !important;
+}
+
+.wao-controls .button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 32px !important;
+    padding: 4px 10px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+    margin-left: -1px !important;
+}
+
+.wao-controls .button:first-child {
+    margin-left: 0 !important;
+    border-top-left-radius: var(--wao-radius) !important;
+    border-bottom-left-radius: var(--wao-radius) !important;
+}
+
+.wao-controls .button:last-child {
+    border-top-right-radius: var(--wao-radius) !important;
+    border-bottom-right-radius: var(--wao-radius) !important;
+}
+
+.wao-controls .button:hover {
+    background-color: var(--wao-bg-muted) !important;
+    border-color: #b0b6bf !important;
+    z-index: 1 !important;
+}
+
+.wao-controls .button:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: 0 0 0 3px var(--wao-ring) !important;
+    z-index: 2 !important;
+}
+
+.wao-controls .button:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+}
+
+/* ==========================================================================
+   Drag Handle
+   ========================================================================== */
+
+.wao-drag-handle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    min-width: 24px !important;
+    height: 24px !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    color: #9ca3af !important;
+    cursor: grab !important;
+    border-radius: 4px !important;
+    transition: color var(--wao-transition), background-color var(--wao-transition) !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+.wao-drag-handle:hover {
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg-muted) !important;
+}
+
+.wao-drag-handle:active {
+    cursor: grabbing !important;
+}
+
+/* Drag state on items */
+.wao-item[draggable="true"] {
+    cursor: default !important;
+}
+
+.wao-item.wao-dragging {
+    opacity: 0.4 !important;
+    border-style: dashed !important;
+}
+
+.wao-item.wao-dragover {
+    position: relative !important;
+}
+
+.wao-item.wao-dragover::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -5px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 3px !important;
+    background-color: var(--wao-border-focus) !important;
+    border-radius: 2px !important;
+    z-index: 10 !important;
+}
+
+/* Small circle indicator at the left end of the drop line */
+.wao-item.wao-dragover::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -8px !important;
+    left: -4px !important;
+    width: 9px !important;
+    height: 9px !important;
+    background-color: var(--wao-border-focus) !important;
+    border-radius: 50% !important;
+    z-index: 11 !important;
+}
+
+.wao-attachment-item[draggable="true"] {
+    cursor: default !important;
+}
+
+.wao-attachment-item.wao-dragging {
+    opacity: 0.4 !important;
+    border-style: dashed !important;
+}
+
+.wao-attachment-item.wao-dragover {
+    position: relative !important;
+}
+
+.wao-attachment-item.wao-dragover::before {
+    content: '' !important;
+    position: absolute !important;
+    top: -5px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 3px !important;
+    background-color: var(--wao-border-focus) !important;
+    border-radius: 2px !important;
+    z-index: 10 !important;
+}
+
+.wao-attachment-item.wao-dragover::after {
+    content: '' !important;
+    position: absolute !important;
+    top: -8px !important;
+    left: -4px !important;
+    width: 9px !important;
+    height: 9px !important;
+    background-color: var(--wao-border-focus) !important;
+    border-radius: 50% !important;
+    z-index: 11 !important;
+}
+
+/* ==========================================================================
+   Description Text
+   ========================================================================== */
+
+.form-table td p code {
+    padding: 2px 6px !important;
+    font-size: 12px !important;
+    color: var(--wao-text-muted) !important;
+    background-color: var(--wao-bg-muted) !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 4px !important;
+}
+
+/* ==========================================================================
+   Labels & Table Headers
+   ========================================================================== */
+
+.form-table th label {
+    font-weight: 600 !important;
+    color: var(--wao-text) !important;
+}
+
+/* ==========================================================================
+   Layout Utilities
+   ========================================================================== */
+
+.wao-flex {
+    display: flex !important;
+}
+
+.wao-flex-between {
+    display: flex !important;
+    justify-content: space-between !important;
+}
+
+.wao-flex-col {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.wao-gap-1 {
+    gap: 4px !important;
+}
+
+.wao-gap-2 {
+    gap: 8px !important;
+}
+
+.wao-gap-3 {
+    gap: 12px !important;
+}
+
+.wao-items-center {
+    align-items: center !important;
+}
+
+.wao-text-right {
+    text-align: right !important;
+}
+
+.wao-text-italic {
+    font-style: italic !important;
+}
+
+/* ==========================================================================
+   Spacing Utilities
+   ========================================================================== */
+
+.wao-p-0 {
+    padding: 0 !important;
+}
+
+.wao-pl-0 {
+    padding-left: 0 !important;
+}
+
+.wao-p-1 {
+    padding: 4px !important;
+}
+
+.wao-p-2 {
+    padding: 8px !important;
+}
+
+.wao-p-3 {
+    padding: 12px !important;
+}
+
+.wao-pt-2 {
+    padding-top: 8px !important;
+}
+
+.wao-mb-1 {
+    margin-bottom: 4px !important;
+}
+
+.wao-mb-2 {
+    margin-bottom: 8px !important;
+}
+
+/* ==========================================================================
+   Display Utilities
+   ========================================================================== */
+
+.wao-hidden {
+    display: none !important;
+}
+
+.wao-inline {
+    display: inline !important;
+}
+
+.wao-block {
+    display: block !important;
+}
+
+/* ==========================================================================
+   Position Utilities
+   ========================================================================== */
+
+.wao-relative {
+    position: relative !important;
+}
+
+.wao-absolute {
+    position: absolute !important;
+}
+
+/* ==========================================================================
+   Border Utilities
+   ========================================================================== */
+
+.wao-border-dashed {
+    border: 1px dashed var(--wao-border) !important;
+}
+
+.wao-border-dashed-dark {
+    border: 1px dashed rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ==========================================================================
+   Size Utilities
+   ========================================================================== */
+
+.wao-max-w-xs {
+    max-width: 320px !important;
+}
+
+.wao-w-max {
+    width: max-content !important;
+}
+
+.wao-img-constrained img {
+    max-width: 300px !important;
+}
+
+/* ==========================================================================
+   Help Tooltip
+   ========================================================================== */
+
+.wao-help {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    top: -1px !important;
+    margin-left: 6px !important;
+    width: 18px !important;
+    height: 18px !important;
+    color: white !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    border-radius: 50% !important;
+    text-decoration: none !important;
+    background-color: #6b7280 !important;
+    transition: background-color var(--wao-transition) !important;
+}
+
+.wao-help:hover {
+    color: white !important;
+    background-color: #374151 !important;
+}
+
+.wao-help:focus {
+    outline: none !important;
+}
+
+/* Popover box – appears to the right with a left-pointing caret */
+.wao-help .wao-help-text {
+    display: none !important;
+    position: absolute !important;
+    left: calc(100% + 10px) !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    padding: 10px 14px !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    line-height: 1.5 !important;
+    max-width: 320px !important;
+    width: max-content !important;
+    color: white !important;
+    background-color: #1f2937 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    border: 1px solid #374151 !important;
+    border-radius: var(--wao-radius-lg) !important;
+    z-index: 999999 !important;
+    white-space: normal !important;
+}
+
+/* Left-pointing caret */
+.wao-help .wao-help-text::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: -6px !important;
+    transform: translateY(-50%) !important;
+    width: 0 !important;
+    height: 0 !important;
+    border-top: 6px solid transparent !important;
+    border-bottom: 6px solid transparent !important;
+    border-right: 6px solid #1f2937 !important;
+}
+
+.wao-help:hover .wao-help-text {
+    display: block !important;
+}
+
+/* ==========================================================================
+   Vue Wrapper (hidden until mounted)
+   ========================================================================== */
+
+.wao-vue-wrap {
+    display: none;
+}
+
+/* ==========================================================================
+   Multi-select Post Control
+   ========================================================================== */
+
+.wao-post-control {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.wao-post-control .select2-container {
+    flex: 1 !important;
+}
+
+/* ==========================================================================
+   Sortable Item List
+   ========================================================================== */
+
+.wao-items {
+    margin-top: 4px !important;
+}
+
+.wao-items .wao-item {
+    margin-bottom: 8px !important;
+    padding: 12px !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: var(--wao-radius-lg) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+}
+
+.wao-items .wao-item:hover {
+    border-color: var(--wao-border) !important;
+    box-shadow: var(--wao-shadow) !important;
+}
+
+.wao-items .wao-item:last-child {
+    margin-bottom: 0 !important;
+}
+
+.wao-items .wao-item .wao-link {
+    display: none !important;
+    margin-left: 4px !important;
+    font-size: 12px !important;
+    color: var(--wao-border-focus) !important;
+    text-decoration: none !important;
+}
+
+.wao-items .wao-item .wao-link:hover {
+    text-decoration: underline !important;
+}
+
+.wao-items .wao-item:hover .wao-link {
+    display: inline !important;
+}
+
+/* Item row: drag handle + content + controls inline */
+.wao-item-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding-bottom: 8px !important;
+}
+
+.wao-item-row .wao-item-content {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.wao-item .wao-controls {
+    padding-top: 10px !important;
+    justify-content: flex-end !important;
+}
+
+/* When controls are inside a row, no top padding */
+.wao-item-row .wao-controls {
+    padding-top: 0 !important;
+}
+
+/* ==========================================================================
+   Attachment Items
+   ========================================================================== */
+
+.wao-attachment-item {
+    padding: 14px !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: var(--wao-radius-lg) !important;
+    position: relative !important;
+    margin-bottom: 8px !important;
+    background-color: var(--wao-bg) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+}
+
+.wao-attachment-item:hover {
+    border-color: var(--wao-border) !important;
+    box-shadow: var(--wao-shadow) !important;
+}
+
+.wao-attachment-item:last-child {
+    margin-bottom: 0 !important;
+}
+
+.wao-attachment-item img {
+    max-width: 300px !important;
+    border-radius: 4px !important;
+}
+
+.wao-attachment-item video {
+    max-width: 400px !important;
+    border-radius: 4px !important;
+}
+
+.wao-attachment-item .wao-type-badge {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--wao-text-muted) !important;
+    background: var(--wao-bg-muted) !important;
+    border-bottom-left-radius: var(--wao-radius-lg) !important;
+    border-top-right-radius: var(--wao-radius-lg) !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    border-left: 1px solid #e5e7eb !important;
+}
+
+.wao-attachment-item .wao-type-badge a {
+    color: inherit !important;
+    text-decoration: none !important;
+}
+
+.wao-attachment-item .wao-type-badge a:hover {
+    color: var(--wao-border-focus) !important;
+}
+
+.wao-attachment-item .wao-item-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 8px !important;
+}
+
+.wao-attachment-item .wao-controls {
+    padding-top: 10px !important;
+    justify-content: flex-end !important;
+}
+
+.wao-attachment-item .wao-item-row .wao-controls {
+    padding-top: 0 !important;
+}
+
+/* ==========================================================================
+   DateTime / Duration
+   ========================================================================== */
+
+.wao-datetime {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+}
+
+.wao-duration {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: center !important;
+}
+
+.wao-duration-field {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.wao-duration-field .wao-field-label {
+    flex: none !important;
+}
+
+.wao-duration-input {
+    width: 90px !important;
+}
+
+/* ==========================================================================
+   JSON Option Fields
+   ========================================================================== */
+
+.wao-json-fields {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.wao-json-fields .wao-image-field {
+    margin-bottom: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.wao-json-fields .wao-image-field img {
+    border-radius: 4px !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+/* Field – inline label + input layout */
+.wao-field {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+.wao-field-label {
+    flex: 0 0 100px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: var(--wao-text) !important;
+    line-height: 1.4 !important;
+    white-space: nowrap !important;
+}
+
+.wao-field input[type="text"],
+.wao-field textarea,
+.wao-field select {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+/* Align textarea label to top */
+.wao-field:has(textarea) {
+    align-items: flex-start !important;
+}
+
+.wao-field:has(textarea) .wao-field-label {
+    padding-top: 8px !important;
+}
+
+/* ==========================================================================
+   Option Wrap (legacy, hidden until mounted)
+   ========================================================================== */
+
+.wao-option-wrap {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Select2 Overrides – Match Tailwind UI style
+   ========================================================================== */
+
+.select2-container--default .select2-selection--single {
+    height: auto !important;
+    padding: 6px 12px !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+}
+
+.select2-container--default .select2-selection--single:focus,
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding: 0 !important;
+    line-height: 1.5 !important;
+    font-size: 14px !important;
+    color: var(--wao-text) !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    top: 50% !important;
+    right: 10px !important;
+    transform: translateY(-50%) !important;
+    height: auto !important;
+}
+
+.select2-dropdown {
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow) !important;
+    margin-top: 4px !important;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--wao-border-focus) !important;
+    color: white !important;
+}
+
+.select2-container--default .select2-results__option--selected {
+    background-color: var(--wao-bg-muted) !important;
+}
+
+.select2-search--dropdown .select2-search__field {
+    padding: 8px 12px !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+}
+
+.select2-search--dropdown .select2-search__field:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: 0 0 0 3px var(--wao-ring) !important;
+}
+
+/* ==========================================================================
+   Horizontal Rules within wao- context
+   ========================================================================== */
+
+.wao-vue-wrap hr,
+.wao-post-control + hr {
+    border: none !important;
+    border-top: 1px solid #e5e7eb !important;
+    margin: 12px 0 !important;
+}

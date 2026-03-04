@@ -15,21 +15,42 @@ class DurationOption extends AbstractAdminOption
             </td>
         </tr>
         <?php
-        add_action( 'admin_footer', [$this, 'render_style'] );
         add_action( 'admin_footer', [$this, 'render_script'] );
     }
 
     public function render_html() {
         ?>
-        <div class="duration-option">
+        <div class="wao-duration">
 
-            <select v-model="hours">
-                <option v-for="v in options.hours" :value="v">{{ v }} hour{{ 1 == v ? '' : 's'}}</option>
-            </select>
+            <template v-if="!custom">
+                <label class="wao-duration-field">
+                    <span class="wao-field-label">Hours</span>
+                    <select v-model="hours">
+                        <option v-for="v in options.hours" :value="v">{{ v }}</option>
+                    </select>
+                </label>
 
-            <select v-model="minutes">
-                <option v-for="v in options.minutes" :value="v">{{ v }} minutes</option>
-            </select>
+                <label class="wao-duration-field">
+                    <span class="wao-field-label">Minutes</span>
+                    <select v-model="minutes">
+                        <option v-for="v in options.minutes" :value="v">{{ v }}</option>
+                    </select>
+                </label>
+            </template>
+
+            <template v-else>
+                <label class="wao-duration-field">
+                    <span class="wao-field-label">Hours</span>
+                    <input type="number" v-model.number="hours" min="0" class="wao-input wao-duration-input">
+                </label>
+
+                <label class="wao-duration-field">
+                    <span class="wao-field-label">Minutes</span>
+                    <input type="number" v-model.number="minutes" min="0" max="59" class="wao-input wao-duration-input">
+                </label>
+            </template>
+
+            <button type="button" class="button" @click="custom = !custom">{{ custom ? 'Presets' : 'Custom' }}</button>
 
         </div>
         <?php
@@ -45,11 +66,15 @@ class DurationOption extends AbstractAdminOption
 
               mounted: function () {
                 $('#<?= $key; ?> .option-wrap').fadeIn();
-                let minutes = Number(<?= json_encode( $this->args['value'] ); ?>),
-                  hours = Math.floor( minutes / 60 ),
-                  mins = minutes % 60;
+                let total = Number(<?= json_encode( $this->args['value'] ); ?>),
+                  hours = Math.floor( total / 60 ),
+                  mins = total % 60;
                 this.hours = hours;
                 this.minutes = mins;
+                // Auto-enable custom mode if values don't match presets
+                if (this.options.hours.indexOf(hours) === -1 || this.options.minutes.indexOf(mins) === -1) {
+                  this.custom = true;
+                }
               },
 
               data: function () {
@@ -57,6 +82,7 @@ class DurationOption extends AbstractAdminOption
                   minutes: 0,
                   hours: 0,
                   days: '',
+                  custom: false,
 
                   options: {
                     minutes: [0, 15, 30, 45],
@@ -87,24 +113,4 @@ class DurationOption extends AbstractAdminOption
         <?php
     }
 
-    public function render_style() {
-        ?>
-        <style>
-            #<?= $key; ?> .items .item {
-                margin-bottom: 5px;
-                padding: 5px;
-                border: 1px dashed #D2D2D2;
-            }
-
-            #<?= $key; ?> .item .controls {
-                padding-top: 5px;
-                text-align: right;
-            }
-
-            #<?= $key; ?> .option-wrap {
-                display: none;
-            }
-        </style>
-        <?php
-    }
 }

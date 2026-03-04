@@ -14,7 +14,6 @@ class ExampleJsonMediaOption extends AbstractAdminOption
             </td>
         </tr>
         <?php
-        add_action( 'admin_footer', [$this, 'render_style'] );
         add_action( 'admin_footer', [$this, 'render_script'] );
     }
 
@@ -30,35 +29,58 @@ class ExampleJsonMediaOption extends AbstractAdminOption
 
             <hr>
 
-            <div class="items">
+            <div class="wao-items">
 
                 <p v-if="!items.length">No digital buttons defined.</p>
 
-                <div v-for="item in items" class="item">
+                <div v-for="(item, i) in items" class="wao-item"
+                     :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
+                     draggable="true"
+                     @dragstart="dragStart(i, $event)"
+                     @dragover.prevent="dragOver(i)"
+                     @drop="drop(i)"
+                     @dragend="dragEnd">
 
-                    <div class="fields">
+                    <div class="wao-item-row">
+                        <span class="wao-drag-handle" title="Drag to reorder">&#x2630;</span>
+                        <div class="wao-controls">
+                            <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
+                            <button type="button" class="button" :disabled="!canMoveDown(item)" @click="moveDown(item)">&#x25BC;</button>
+                            <button type="button" class="button" @click="removeItem(item)">×</button>
+                        </div>
+                    </div>
 
-                        <div class="image">
+                    <div class="wao-json-fields">
+
+                        <div class="wao-image-field">
                             <div v-if="'' === item.image_id">
                                 No image selected.
                             </div>
                             <div v-else>
                                 <img :src="item.image_url" width="150">
                             </div>
-                            <button type="button" class="button" @click="openFrame(item)">Select Image</button>
-                            <button type="button" class="button" v-if="'' !== item.image_id">Remove Image</button>
+                            <div class="wao-action-group">
+                                <button type="button" class="button" @click="openFrame(item)">Select Image</button>
+                                <button type="button" class="button" v-if="'' !== item.image_id">Remove Image</button>
+                            </div>
                         </div>
 
-                        <input title="Text" type="text" placeholder="Text" v-model="item.text" class="widefat">
-                        <input title="Alt Text" type="text" placeholder="Alt Text" v-model="item.image_alt_text" class="widefat">
-                        <input title="Button text" type="text" placeholder="Button Text" v-model="item.button_text" class="widefat">
-                        <input title="URL" type="text" placeholder="Button URL" v-model="item.url" class="widefat">
-                    </div>
-
-                    <div class="controls">
-                        <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
-                        <button type="button" class="button" :disabled="!canMoveDown(item)" @click="moveDown(item)">&#x25BC;</button>
-                        <button type="button" class="button" @click="removeItem(item)">×</button>
+                        <label class="wao-field">
+                            <span class="wao-field-label">Text</span>
+                            <input type="text" placeholder="Text" v-model="item.text" class="widefat">
+                        </label>
+                        <label class="wao-field">
+                            <span class="wao-field-label">Alt Text</span>
+                            <input type="text" placeholder="Alt Text" v-model="item.image_alt_text" class="widefat">
+                        </label>
+                        <label class="wao-field">
+                            <span class="wao-field-label">Button Text</span>
+                            <input type="text" placeholder="Button Text" v-model="item.button_text" class="widefat">
+                        </label>
+                        <label class="wao-field">
+                            <span class="wao-field-label">URL</span>
+                            <input type="text" placeholder="Button URL" v-model="item.url" class="widefat">
+                        </label>
                     </div>
 
                 </div>
@@ -86,7 +108,9 @@ class ExampleJsonMediaOption extends AbstractAdminOption
                 return {
                   items: <?= json_encode( $this->args['value'] ); ?>,
                   selectedItem: null,
-                  maxItems: 2
+                  maxItems: 2,
+                  dragIndex: null,
+                  dragOverIndex: null,
                 }
               },
 
@@ -171,6 +195,25 @@ class ExampleJsonMediaOption extends AbstractAdminOption
                     this.items.splice(index, 2, next, item);
                   }
                 },
+
+                dragStart: function (index, event) {
+                  this.dragIndex = index;
+                  event.dataTransfer.effectAllowed = 'move';
+                },
+                dragOver: function (index) {
+                  this.dragOverIndex = index;
+                },
+                drop: function (index) {
+                  if (this.dragIndex === null || this.dragIndex === index) return;
+                  var item = this.items.splice(this.dragIndex, 1)[0];
+                  this.items.splice(index, 0, item);
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
+                dragEnd: function () {
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
               }
             }).mount('#<?= $key; ?>');
           });
@@ -178,25 +221,4 @@ class ExampleJsonMediaOption extends AbstractAdminOption
         <?php
     }
 
-    public function render_style() {
-        $key = esc_attr( $this->args['key'] );
-        ?>
-        <style>
-            #<?= $key; ?> .items .item {
-                margin-bottom: 5px;
-                padding: 5px;
-                border: 1px dashed #D2D2D2;
-            }
-
-            #<?= $key; ?> .item .controls {
-                padding-top: 5px;
-                text-align: right;
-            }
-
-            #<?= $key; ?> .option-wrap {
-                display: none;
-            }
-        </style>
-        <?php
-    }
 }

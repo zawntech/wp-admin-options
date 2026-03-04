@@ -3,69 +3,84 @@ namespace Zawntech\WPAdminOptions;
 
 class AttachmentOption extends AbstractAdminOption
 {
-    public function render_taxonomy_field() {
+    protected function render_attachment_content() {
         $key = esc_attr( $this->args['key'] );
         $description = trim( $this->args['description'] );
         $multiple = $this->args['multiple'];
         ?>
+
+        <div class="wao-action-group">
+            <button type="button" class="button" @click="openFrame()">Select Media</button>
+            <button type="button" class="button" @click="clear()">Clear</button>
+        </div>
+
+        <hr>
+
+        <p v-if="!ids.length">
+            No <?= $multiple ? 'attachments are' : 'attachment is'; ?> assigned.
+        </p>
+
+        <div v-if="ids.length">
+
+            <div v-for="(item, i) in media" class="wao-attachment-item"
+                 :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
+                 draggable="true"
+                 @dragstart="dragStart(i, $event)"
+                 @dragover.prevent="dragOver(i)"
+                 @drop="drop(i)"
+                 @dragend="dragEnd">
+
+                <?php if ( $multiple ) : ?>
+                <div class="wao-item-row">
+                    <span class="wao-drag-handle" title="Drag to reorder">&#x2630;</span>
+                    <div class="wao-controls">
+                        <button type="button" class="button" :disabled="!canMoveUp(item.id)" @click="moveUp(item.id)">&#x25B2;</button>
+                        <button type="button" class="button" :disabled="!canMoveDown(item.id)" @click="moveDown(item.id)">&#x25BC;</button>
+                        <button type="button" class="button" @click="removeItem(item.id)">&times;</button>
+                    </div>
+                </div>
+                <?php endif; ?>
+
+                <div v-if="'Image' == getType(item)">
+                    <img :src="item.url">
+                </div>
+
+                <div v-if="'Video' == getType(item)">
+                    <video controls>
+                        <source :src="item.url">
+                    </video>
+                </div>
+
+                <div v-if="'Other' == getType(item)">
+                    <a :href="item.url" target="_blank">{{ item.title }}</a>
+                </div>
+
+                <span class="wao-type-badge">
+                    <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
+                        {{ getType(item) }}
+                    </a>
+                </span>
+
+            </div>
+
+        </div>
+
+        <input type="hidden" :value="json" name="<?= $key; ?>">
+
+        <?php
+        if ( !empty( $description ) ) {
+            printf( '<p><code>%s</code></p>', $description );
+        }
+    }
+
+    public function render_taxonomy_field() {
+        wp_enqueue_media();
+        $key = esc_attr( $this->args['key'] );
+        ?>
         <div class="form-field term-slug-wrap">
             <?php $this->render_option_label(false); ?>
             <div id="<?= $key; ?>">
-
-                <button type="button" class="button" @click="openFrame()">Select Media</button>
-                <button type="button" class="button" @click="clear()">Clear</button>
-
-                <hr>
-
-                <p v-if="!ids.length">
-                    No <?= $multiple ? 'attachments are' : 'attachment is'; ?> assigned.
-                </p>
-
-                <div v-if="ids.length">
-
-                    <div v-for="item in media" class="item">
-
-                        <div v-if="'Image' == getType(item)">
-                            <img :src="item.url">
-                        </div>
-
-                        <div v-if="'Video' == getType(item)">
-                            <video controls>
-                                <source :src="item.url">
-                            </video>
-                        </div>
-
-                        <div v-if="'Other' == getType(item)">
-                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
-                                {{ item.title }}
-                            </a>
-                        </div>
-
-                        <span class="type">
-                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
-                                {{ getType(item) }}
-                            </a>
-                        </span>
-
-                        <?php if ( $multiple ) : ?>
-                            <div class="controls">
-                                <button type="button" class="button" :disabled="!canMoveUp(item.id)" @click="moveUp(item.id)">&#x25B2;</button>
-                                <button type="button" class="button" :disabled="!canMoveDown(item.id)" @click="moveDown(item.id)">&#x25BC;</button>
-                                <button type="button" class="button" @click="removeItem(item.id)">×</button>
-                            </div>
-                        <?php endif; ?>
-
-                    </div>
-
-                </div>
-
-                <input type="hidden" :value="json" name="<?= $key; ?>">
-
-                <?php
-                if ( !empty( $description ) ) {
-                    printf( '<p><code>%s</code></p>', $description );
-                }
-                ?>
+                <?php $this->render_attachment_content(); ?>
             </div>
         </div>
         <?php
@@ -74,67 +89,13 @@ class AttachmentOption extends AbstractAdminOption
     }
 
     public function render_admin_table() {
+        wp_enqueue_media();
         $key = esc_attr( $this->args['key'] );
-        $description = trim( $this->args['description'] );
-        $multiple = $this->args['multiple'];
         ?>
         <tr id="<?= $key; ?>">
             <?php $this->render_option_label(); ?>
             <td>
-
-                <button type="button" class="button" @click="openFrame()">Select Media</button>
-                <button type="button" class="button" @click="clear()">Clear</button>
-
-                <hr>
-
-                <p v-if="!ids.length">
-                    No <?= $multiple ? 'attachments are' : 'attachment is'; ?> assigned.
-                </p>
-
-                <div v-if="ids.length">
-
-                    <div v-for="item in media" class="item">
-
-                        <div v-if="'Image' == getType(item)">
-                            <img :src="item.url">
-                        </div>
-
-                        <div v-if="'Video' == getType(item)">
-                            <video controls>
-                                <source :src="item.url">
-                            </video>
-                        </div>
-
-                        <div v-if="'Other' == getType(item)">
-                            <a :href="item.url" target="_blank">{{ item.title }}</a>
-                        </div>
-
-                        <span class="type">
-                            <a :href="'<?= admin_url( 'upload.php?item=' ); ?>' + item.id" target="_blank">
-                                {{ getType(item) }}
-                            </a>
-                        </span>
-
-
-                        <?php if ( $multiple ) : ?>
-                            <div class="controls">
-                                <button type="button" class="button" :disabled="!canMoveUp(item.id)" @click="moveUp(item.id)">&#x25B2;</button>
-                                <button type="button" class="button" :disabled="!canMoveDown(item.id)" @click="moveDown(item.id)">&#x25BC;</button>
-                                <button type="button" class="button" @click="removeItem(item.id)">×</button>
-                            </div>
-                        <?php endif; ?>
-
-                    </div>
-
-                </div>
-
-                <input type="hidden" :value="json" name="<?= $key; ?>">
-
-                <?php
-                if ( !empty( $description ) ) {
-                    printf( '<p><code>%s</code></p>', $description );
-                }
-                ?>
+                <?php $this->render_attachment_content(); ?>
             </td>
         </tr>
         <?php
@@ -169,7 +130,9 @@ class AttachmentOption extends AbstractAdminOption
               data: function () {
                 return {
                   ids: <?= json_encode( $ids ); ?>,
-                  data: <?= json_encode( $data ); ?>
+                  data: <?= json_encode( $data ); ?>,
+                  dragIndex: null,
+                  dragOverIndex: null,
                 }
               },
 
@@ -260,7 +223,26 @@ class AttachmentOption extends AbstractAdminOption
                       //return item.type;
                       return 'Other';
                   }
-                }
+                },
+
+                dragStart: function (index, event) {
+                  this.dragIndex = index;
+                  event.dataTransfer.effectAllowed = 'move';
+                },
+                dragOver: function (index) {
+                  this.dragOverIndex = index;
+                },
+                drop: function (index) {
+                  if (this.dragIndex === null || this.dragIndex === index) return;
+                  var id = this.ids.splice(this.dragIndex, 1)[0];
+                  this.ids.splice(index, 0, id);
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
+                dragEnd: function () {
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
               },
 
               computed: {
@@ -288,30 +270,13 @@ class AttachmentOption extends AbstractAdminOption
     }
 
     public function render_style() {
-
         $color = $this->args['bg_color'];
-
-        ?>
+        if ( '#FFFFFF' !== strtoupper( $color ) ) : ?>
         <style>
-            #<?= $this->args['key']; ?> img {
-                max-width: 300px;
-            }
-
-            #<?= $this->args['key']; ?> .item {
-                padding: 10px;
-                border: 1px dashed rgba(0,0,0,.6);
-                position: relative;
-                background-color: <?= $color; ?>;
-            }
-
-            #<?= $this->args['key']; ?> .item .type {
-                position: absolute;
-                top: 0;
-                right: 0;
-                padding: 10px;
-                background: white;
+            #<?= esc_attr( $this->args['key'] ); ?> .wao-attachment-item {
+                background-color: <?= esc_attr( $color ); ?>;
             }
         </style>
-        <?php
+        <?php endif;
     }
 }

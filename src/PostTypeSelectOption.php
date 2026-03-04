@@ -97,8 +97,8 @@ class PostTypeSelectOption extends AbstractAdminOption
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
-            <td id="<?= $args['key']; ?>-wrap">
-                <div class="post-control" style="display: flex; justify-content: space-between;">
+            <td id="<?= $args['key']; ?>-wrap" class="wao-vue-wrap">
+                <div class="wao-post-control">
                     <select
                         id="<?= $args['key']; ?>"
                         name="<?= $args['key']; ?>"
@@ -116,18 +116,25 @@ class PostTypeSelectOption extends AbstractAdminOption
                     <button type="button" class="button" @click="addItem()">Add</button>
                 </div>
                 <hr>
-                <div class="items">
+                <div class="wao-items">
                     <p v-if="!items.length">
                         No <?= strtolower( $this->get_post_type_label('plural') ); ?> have been selected.
                     </p>
-                    <div v-for="(item, i) in items" class="item" :key="item">
-
-                        <span v-html="formatPostTitle(item, i)"></span>
-
-                        <div class="controls">
-                            <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
-                            <button type="button" class="button" :disabled="!canMoveDown(item)" @click="moveDown(item)">&#x25BC;</button>
-                            <button type="button" class="button" @click="removeItem(item)">×</button>
+                    <div v-for="(item, i) in items" class="wao-item" :key="item"
+                         :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
+                         draggable="true"
+                         @dragstart="dragStart(i, $event)"
+                         @dragover.prevent="dragOver(i)"
+                         @drop="drop(i)"
+                         @dragend="dragEnd">
+                        <div class="wao-item-row">
+                            <span class="wao-drag-handle" title="Drag to reorder">&#x2630;</span>
+                            <span class="wao-item-content" v-html="formatPostTitle(item, i)"></span>
+                            <div class="wao-controls">
+                                <button type="button" class="button" :disabled="!canMoveUp(item)" @click="moveUp(item)">&#x25B2;</button>
+                                <button type="button" class="button" :disabled="!canMoveDown(item)" @click="moveDown(item)">&#x25BC;</button>
+                                <button type="button" class="button" @click="removeItem(item)">×</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -158,6 +165,8 @@ class PostTypeSelectOption extends AbstractAdminOption
                   selectedPost: '',
                   items: <?= json_encode( $this->get_args()['value'] ); ?>,
                   posts: <?= json_encode( $this->get_args()['options'] ); ?>,
+                  dragIndex: null,
+                  dragOverIndex: null,
                 }
               },
 
@@ -173,9 +182,9 @@ class PostTypeSelectOption extends AbstractAdminOption
                   var count = (index+1),
                     postTitle = this.posts[postId],
                     editPostUrl = '<?= admin_url(); ?>post.php?post=' + postId + '&action=edit',
-                    editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="link">[Edit]</a>',
+                    editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>',
                     viewPostUrl = '<?= home_url(); ?>?p=' + postId,
-                    viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="link">[View]</a>';
+                    viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="wao-link">[View]</a>';
                   return [
                     '#' + count,
                     '-',
@@ -226,6 +235,25 @@ class PostTypeSelectOption extends AbstractAdminOption
                     this.items.splice(index, 2, next, item);
                   }
                 },
+
+                dragStart: function (index, event) {
+                  this.dragIndex = index;
+                  event.dataTransfer.effectAllowed = 'move';
+                },
+                dragOver: function (index) {
+                  this.dragOverIndex = index;
+                },
+                drop: function (index) {
+                  if (this.dragIndex === null || this.dragIndex === index) return;
+                  var item = this.items.splice(this.dragIndex, 1)[0];
+                  this.items.splice(index, 0, item);
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
+                dragEnd: function () {
+                  this.dragIndex = null;
+                  this.dragOverIndex = null;
+                },
               },
 
               mounted: function () {
@@ -240,40 +268,8 @@ class PostTypeSelectOption extends AbstractAdminOption
                 });
               }
             }).mount('#<?= $key; ?>-wrap');
-          })
+          });
         </script>
-        <style>
-            #<?= $key; ?>-wrap {
-                display: none;
-            }
-            #<?= $key; ?>-wrap .post-control {
-                display: flex;
-                justify-content: space-between;
-            }
-
-            #<?= $key; ?>-wrap .items .item {
-                margin-bottom: 5px;
-                padding: 5px;
-                border: 1px dashed #D2D2D2;
-            }
-
-            #<?= $key; ?>-wrap .items .item .link {
-                display: none;
-            }
-
-            #<?= $key; ?>-wrap .items .item:hover .link {
-                display: inline;
-            }
-
-            #<?= $key; ?>-wrap .item .controls {
-                padding-top: 5px;
-                text-align: right;
-            }
-
-            #<?= $key; ?>-wrap .option-wrap {
-                display: none;
-            }
-        </style>
         <?php
     }
 
