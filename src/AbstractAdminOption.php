@@ -4,6 +4,8 @@ namespace Zawntech\WPAdminOptions;
 
 abstract class AbstractAdminOption
 {
+    protected static $initialized = false;
+
     protected $args = [
 
         // General
@@ -49,6 +51,11 @@ abstract class AbstractAdminOption
     ];
 
     public function __construct( $args = [] ) {
+        if ( ! static::$initialized ) {
+            Bootstrap\WPAdminOptions::init();
+            static::$initialized = true;
+        }
+
         $this->args = wp_parse_args( $args, $this->args );
         if ( empty( $this->args['value'] ) && '' !== $this->args['default'] ) {
             $this->args['value'] = $args['default'];
