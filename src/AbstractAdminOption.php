@@ -157,24 +157,10 @@ abstract class AbstractAdminOption
             <span class="wao-copy-icon">&#x2398;</span>
             <span class="wao-copy-done" style="display:none;">&#x2713;</span>
         </button>
-        <script>
-        (function(){
-            var btn = document.querySelector('[data-copy-target="<?= $key; ?>"]');
-            if (!btn) return;
-            btn.addEventListener('click', function() {
-                var input = document.getElementById('<?= $key; ?>');
-                if (!input) return;
-                navigator.clipboard.writeText(input.value).then(function() {
-                    btn.querySelector('.wao-copy-icon').style.display = 'none';
-                    btn.querySelector('.wao-copy-done').style.display = '';
-                    setTimeout(function() {
-                        btn.querySelector('.wao-copy-icon').style.display = '';
-                        btn.querySelector('.wao-copy-done').style.display = 'none';
-                    }, 1500);
-                });
-            });
-        })();
-        </script>
+        <script>(function() {
+            <?php $args = [ 'key' => $key ]; ?>
+            WPAdminOptions.CopyButton(<?= json_encode( $args ); ?>);
+        })();</script>
         <?php
     }
 
@@ -228,6 +214,39 @@ abstract class AbstractAdminOption
             </td>
         </tr>
         <?php
+    }
+
+    /**
+     * Render an error banner when the option value is not an array.
+     * Returns true if an error was rendered (caller should return early).
+     */
+    protected function render_array_error() {
+        if ( is_array( $this->args['value'] ) ) {
+            return false;
+        }
+
+        $key = esc_attr( $this->args['key'] );
+        $context = $this->args['context'];
+
+        if ( 'taxonomy' === $context ) {
+            ?>
+            <div class="form-field" id="row-<?= $key; ?>">
+                <?php $this->render_option_label( false ); ?>
+                <div class="wao-error">This option expects an array value. Check the stored value for <code><?= $key; ?></code>.</div>
+            </div>
+            <?php
+        } else {
+            ?>
+            <tr id="row-<?= $key; ?>">
+                <?php $this->render_option_label(); ?>
+                <td>
+                    <div class="wao-error">This option expects an array value. Check the stored value for <code><?= $key; ?></code>.</div>
+                </td>
+            </tr>
+            <?php
+        }
+
+        return true;
     }
 
     /**

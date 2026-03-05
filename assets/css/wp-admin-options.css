@@ -1027,3 +1027,18 @@ input[type="checkbox"].wao-toggle:focus {
     border-top: 1px solid #e5e7eb !important;
     margin: 12px 0 !important;
 }
+
+/* ==========================================================================
+   Error Banner
+   ========================================================================== */
+
+.wao-error {
+    background-color: #fef2f2;
+    border: 1px solid #fca5a5;
+    border-left: 4px solid #dc2626;
+    color: #991b1b;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+}

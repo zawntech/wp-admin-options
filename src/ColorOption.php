@@ -44,58 +44,26 @@ class ColorOption extends AbstractAdminOption
     }
 
     public function scripts() {
-
         $color_picker_type = $this->args['type'] ?? '';
 
-        if ( empty( $color_picker_type ) || 'default' === $color_picker_type ) {
-            $this->color_picker_type_default();
-        }
-
         if ( 'spectrum' === $color_picker_type ) {
-            $this->color_picker_type_spectrum();
+            wp_register_script( 'color-picker-spectrum', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js' );
+            wp_register_style( 'color-picker-spectrum', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css' );
+            wp_enqueue_style( 'color-picker-spectrum' );
+            wp_enqueue_script( 'color-picker-spectrum' );
+        } else {
+            $color_picker_type = 'default';
+            wp_enqueue_style( 'wp-color-picker' );
+            wp_enqueue_script( 'wp-color-picker' );
         }
-    }
 
-    public function color_picker_type_default() {
-        // Enqueue color picker CSS and JS
-        wp_enqueue_style( 'wp-color-picker' );
-        wp_enqueue_script( 'wp-color-picker' );
-
-        // Bind color picker.
-        add_action( 'admin_footer', function() {
+        add_action( 'admin_footer', function() use ( $color_picker_type ) {
             $key = esc_attr( $this->args['key'] );
             ?>
-            <script>
-              jQuery(document).ready(function ($) {
-                $('input[name="<?= $key; ?>"]').wpColorPicker();
-              });
-            </script>
-            <?php
-        } );
-    }
-
-    public function color_picker_type_spectrum() {
-
-        wp_register_script( 'color-picker-spectrum', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js' );
-        wp_register_style( 'color-picker-spectrum', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css' );
-
-        wp_enqueue_style( 'color-picker-spectrum' );
-        wp_enqueue_script( 'color-picker-spectrum' );
-
-        // Bind color picker.
-        add_action( 'admin_footer', function() {
-            $key = esc_attr( $this->args['key'] );
-            ?>
-            <script>
-              jQuery(document).ready(function ($) {
-                $('input[name="<?= $key; ?>"]').spectrum({
-                  showInput: true,
-                  showAlpha: true,
-                  preferredFormat: 'hex',
-                  allowEmpty: true,
-                });
-              });
-            </script>
+            <script>(function() {
+                <?php $args = [ 'key' => $key, 'type' => $color_picker_type ]; ?>
+                WPAdminOptions.ColorOption(<?= json_encode( $args ); ?>);
+            })();</script>
             <?php
         } );
     }

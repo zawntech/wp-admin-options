@@ -4,6 +4,7 @@ namespace Zawntech\WPAdminOptions;
 class ExampleJsonMediaOption extends AbstractAdminOption
 {
     public function render_admin_table() {
+        if ( $this->render_array_error() ) return;
         $key = esc_attr( $this->args['key'] );
         ?>
         <tr id="<?= $key; ?>">
@@ -61,7 +62,7 @@ class ExampleJsonMediaOption extends AbstractAdminOption
                             </div>
                             <div class="wao-action-group">
                                 <button type="button" class="button" @click="openFrame(item)">Select Image</button>
-                                <button type="button" class="button" v-if="'' !== item.image_id">Remove Image</button>
+                                <button type="button" class="button" v-if="'' !== item.image_id" @click="item.image_id = ''; item.image_url = '';">Remove Image</button>
                             </div>
                         </div>
 
@@ -94,129 +95,76 @@ class ExampleJsonMediaOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         ?>
         <script>
-          jQuery(document).ready(function ($) {
-
-            var frame;
-
-            var app = Vue.createApp({
-
-              mounted: function () {
-                $('#<?= $key; ?> .option-wrap').fadeIn();
-              },
-
-              data: function () {
-                return {
-                  items: <?= json_encode( $this->args['value'] ); ?>,
-                  selectedItem: null,
-                  maxItems: 2,
-                  dragIndex: null,
-                  dragOverIndex: null,
-                }
-              },
-
-              computed: {
-
-                json: function () {
-                  return JSON.stringify(this.items);
-                }
-              },
-
-              methods: {
-
-                addItem: function () {
-                  this.items.push({
-                    id: Date.now(),
-                    url: '',
-                    text: '',
-                    icon_id: '',
-                    image_id: '',
-                    image_url: '',
-                    button_text: '',
-                    image_alt_text: '',
-                  });
-                },
-
-                openFrame: function (item) {
-
-                  var self = this;
-                  self.selectedItem = item;
-
-                  if (frame) {
-                    frame.open();
-                    return;
-                  }
-
-                  // Create a new media frame
-                  frame = wp.media({
-                    title: 'Select Media',
-                    button: {
-                      text: 'Select'
+          /**
+           * Example: extend WPAdminOptions with a custom JSON + Media option type.
+           * Uses the shared _dragMixin, _itemMixin, and _merge helpers from the global namespace,
+           * and adds wp.media() integration for per-item image selection.
+           */
+          WPAdminOptions.ExampleJsonMediaOption = function (config) {
+            jQuery(document).ready(function ($) {
+              var frame;
+              var opts = WPAdminOptions._merge(
+                WPAdminOptions._dragMixin(),
+                WPAdminOptions._itemMixin(null, 'items'),
+                {
+                  data: function () {
+                    return {
+                      items: config.items,
+                      selectedItem: null,
+                      maxItems: 2
+                    };
+                  },
+                  computed: {
+                    json: function () {
+                      return JSON.stringify(this.items);
+                    }
+                  },
+                  methods: {
+                    // Override _itemMixin's addItem to push a new object instead of selecting from a list.
+                    addItem: function () {
+                      this.items.push({
+                        id: Date.now(),
+                        url: '',
+                        text: '',
+                        icon_id: '',
+                        image_id: '',
+                        image_url: '',
+                        button_text: '',
+                        image_alt_text: '',
+                      });
                     },
-                    multiple: false  // Set to true to allow multiple files to be selected
-                  });
-
-                  frame.on('select', function () {
-                    var attachment = frame.state().get('selection').first().toJSON(),
-                      id = attachment.id,
-                      url = attachment.url;
-                    self.selectedItem.image_id = id;
-                    self.selectedItem.image_url = url;
-                  });
-
-                  frame.open();
-                },
-
-                removeItem: function (item) {
-                  this.items.splice(this.items.indexOf(item), 1);
-                },
-
-                canMoveUp: function (item) {
-                  var index = this.items.indexOf(item);
-                  return index > 0;
-                },
-
-                canMoveDown: function (item) {
-                  var index = this.items.indexOf(item);
-                  return index < this.items.length - 1;
-                },
-
-                moveUp: function (item) {
-                  var index = this.items.indexOf(item);
-                  if (this.canMoveUp(item)) {
-                    var prev = this.items[ index - 1 ];
-                    this.items.splice(index - 1, 2, item, prev);
+                    openFrame: function (item) {
+                      var self = this;
+                      self.selectedItem = item;
+                      if (frame) {
+                        frame.open();
+                        return;
+                      }
+                      frame = wp.media({
+                        title: 'Select Media',
+                        button: { text: 'Select' },
+                        multiple: false
+                      });
+                      frame.on('select', function () {
+                        var attachment = frame.state().get('selection').first().toJSON();
+                        self.selectedItem.image_id = attachment.id;
+                        self.selectedItem.image_url = attachment.url;
+                      });
+                      frame.open();
+                    }
+                  },
+                  mounted: function () {
+                    $('#' + config.key + ' .option-wrap').fadeIn();
                   }
-                },
-
-                moveDown: function (item) {
-                  var index = this.items.indexOf(item);
-                  if (this.canMoveDown(item)) {
-                    var next = this.items[ index + 1 ];
-                    this.items.splice(index, 2, next, item);
-                  }
-                },
-
-                dragStart: function (index, event) {
-                  this.dragIndex = index;
-                  event.dataTransfer.effectAllowed = 'move';
-                },
-                dragOver: function (index) {
-                  this.dragOverIndex = index;
-                },
-                drop: function (index) {
-                  if (this.dragIndex === null || this.dragIndex === index) return;
-                  var item = this.items.splice(this.dragIndex, 1)[0];
-                  this.items.splice(index, 0, item);
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-                dragEnd: function () {
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-              }
-            }).mount('#<?= $key; ?>');
-          });
+                }
+              );
+              Vue.createApp(opts).mount('#' + config.key);
+            });
+          };
+          (function() {
+            <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
+            WPAdminOptions.ExampleJsonMediaOption(<?= json_encode( $args ); ?>);
+          })();
         </script>
         <?php
     }

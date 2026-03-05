@@ -59,57 +59,10 @@ class DurationOption extends AbstractAdminOption
     public function render_script() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>
-          jQuery(document).ready(function ($) {
-
-            var app = Vue.createApp({
-
-              mounted: function () {
-                $('#<?= $key; ?> .option-wrap').fadeIn();
-                let total = Number(<?= json_encode( $this->args['value'] ); ?>),
-                  hours = Math.floor( total / 60 ),
-                  mins = total % 60;
-                this.hours = hours;
-                this.minutes = mins;
-                // Auto-enable custom mode if values don't match presets
-                if (this.options.hours.indexOf(hours) === -1 || this.options.minutes.indexOf(mins) === -1) {
-                  this.custom = true;
-                }
-              },
-
-              data: function () {
-                return {
-                  minutes: 0,
-                  hours: 0,
-                  days: '',
-                  custom: false,
-
-                  options: {
-                    minutes: [0, 15, 30, 45],
-                    hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-                  }
-                }
-              },
-
-              computed: {
-
-                json: function () {
-                  return JSON.stringify(this.value);
-                },
-
-                value() {
-                  let minutes = this.minutes,
-                    hours = 60 * this.hours;
-                  return minutes + hours;
-                }
-              },
-
-              methods: {
-
-              }
-            }).mount('#<?= $key; ?>');
-          });
-        </script>
+        <script>(function() {
+            <?php $args = [ 'key' => $key, 'value' => $this->args['value'] ]; ?>
+            WPAdminOptions.DurationOption(<?= json_encode( $args ); ?>);
+        })();</script>
         <?php
     }
 

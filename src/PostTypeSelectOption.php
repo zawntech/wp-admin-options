@@ -80,17 +80,17 @@ class PostTypeSelectOption extends AbstractAdminOption
                     printf( '<p><code>%s</code></p>', $args['description'] );
                 }
                 ?>
-                <script>
-                  jQuery(document).ready(function ($) {
-                    $('#<?= $key; ?>-wrap .select2').select2();
-                  })
-                </script>
+                <script>(function() {
+                    <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
+                    WPAdminOptions.PostTypeSelectOption(<?= json_encode( $args ); ?>);
+                })();</script>
             </td>
         </tr>
         <?php
     }
 
     public function render_multiple() {
+        if ( $this->render_array_error() ) return;
         $args = $this->get_args();
         $key = esc_attr( $args['key'] );
 
@@ -153,123 +153,10 @@ class PostTypeSelectOption extends AbstractAdminOption
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>
-
-          console.log({key: <?= $key; ?>})
-          jQuery(document).ready(function ($) {
-
-            var app = Vue.createApp({
-
-              data: function () {
-                return {
-                  selectedPost: '',
-                  items: <?= json_encode( $this->get_args()['value'] ); ?>,
-                  posts: <?= json_encode( $this->get_args()['options'] ); ?>,
-                  dragIndex: null,
-                  dragOverIndex: null,
-                }
-              },
-
-              computed: {
-                json: function() {
-                  return JSON.stringify(this.items);
-                }
-              },
-
-              methods: {
-
-                formatPostTitle: function (postId, index) {
-                  var count = (index+1),
-                    postTitle = this.posts[postId],
-                    editPostUrl = '<?= admin_url(); ?>post.php?post=' + postId + '&action=edit',
-                    editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>',
-                    viewPostUrl = '<?= home_url(); ?>?p=' + postId,
-                    viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="wao-link">[View]</a>';
-                  return [
-                    '#' + count,
-                    '-',
-                    postTitle,
-                    editPostLink,
-                    viewPostLink
-                  ].join(' ');
-                },
-
-                addItem: function () {
-                  if ( '' === this.selectedPost ) {
-                    alert('Please select a post to add.');
-                    return;
-                  }
-                  if ( -1 === this.items.indexOf(this.selectedPost) ) {
-                    this.items.push(this.selectedPost);
-                  }
-                  this.selectedPost = '';
-                  $('#<?= $key; ?>-wrap .select2').val('').trigger('change');
-                },
-
-                removeItem: function (item) {
-                  this.items.splice(this.items.indexOf(item), 1);
-                },
-
-                canMoveUp: function (item) {
-                  var index = this.items.indexOf(item);
-                  return index > 0;
-                },
-
-                canMoveDown: function (item) {
-                  var index = this.items.indexOf(item);
-                  return index < this.items.length - 1;
-                },
-
-                moveUp: function (item) {
-                  var index = this.items.indexOf(item);
-                  if (this.canMoveUp(item)) {
-                    var prev = this.items[ index - 1 ];
-                    this.items.splice(index - 1, 2, item, prev);
-                  }
-                },
-
-                moveDown: function (item) {
-                  var index = this.items.indexOf(item);
-                  if (this.canMoveDown(item)) {
-                    var next = this.items[ index + 1 ];
-                    this.items.splice(index, 2, next, item);
-                  }
-                },
-
-                dragStart: function (index, event) {
-                  this.dragIndex = index;
-                  event.dataTransfer.effectAllowed = 'move';
-                },
-                dragOver: function (index) {
-                  this.dragOverIndex = index;
-                },
-                drop: function (index) {
-                  if (this.dragIndex === null || this.dragIndex === index) return;
-                  var item = this.items.splice(this.dragIndex, 1)[0];
-                  this.items.splice(index, 0, item);
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-                dragEnd: function () {
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-              },
-
-              mounted: function () {
-
-                var select = $('#<?= $key; ?>-wrap .select2'),
-                  self = this;
-                $('#<?= $key; ?>-wrap').fadeIn(function () {
-                  select.select2();
-                  select.on('select2:select', function (e) {
-                    self.selectedPost = select.val();
-                  });
-                });
-              }
-            }).mount('#<?= $key; ?>-wrap');
-          });
-        </script>
+        <script>(function() {
+            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url(), 'homeUrl' => home_url() ]; ?>
+            WPAdminOptions.PostTypeSelectOption(<?= json_encode( $args ); ?>);
+        })();</script>
         <?php
     }
 

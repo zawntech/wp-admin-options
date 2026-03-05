@@ -55,14 +55,10 @@ class BooleanCheckboxOption extends AbstractAdminOption
         add_action( 'admin_footer', function() {
             $key = esc_attr( $this->args['key'] );
             ?>
-            <script>
-              jQuery(document).ready(function ($) {
-                $('input#<?= $key; ?>').on('change', function () {
-                  var checked = $(this).is(':checked');
-                  $('input[name="<?= $key; ?>"]').val(checked ? 1 : 0);
-                });
-              });
-            </script>
+            <script>(function() {
+                <?php $args = [ 'key' => $key ]; ?>
+                WPAdminOptions.BooleanCheckboxOption(<?= json_encode( $args ); ?>);
+            })();</script>
             <?php
         } );
     }

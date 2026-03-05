@@ -82,7 +82,7 @@ class WPAdminOptions
         }
         wp_enqueue_script( 'select2' );
 
-        // WP Admin Options stylesheet
+        // WP Admin Options assets
         if ( ! static::$test_mode ) {
             $assets_url = static::get_assets_url();
             if ( ! wp_style_is( 'wp-admin-options', 'registered' ) ) {
@@ -94,6 +94,17 @@ class WPAdminOptions
                 );
             }
             wp_enqueue_style( 'wp-admin-options' );
+
+            if ( ! wp_script_is( 'wp-admin-options', 'registered' ) ) {
+                wp_register_script(
+                    'wp-admin-options',
+                    $assets_url . 'js/wp-admin-options.js',
+                    [ 'jquery', 'vue', 'select2' ],
+                    '1.0.0',
+                    true
+                );
+            }
+            wp_enqueue_script( 'wp-admin-options' );
         }
     }
 
@@ -112,6 +123,12 @@ class WPAdminOptions
         $css_file = dirname( __DIR__, 2 ) . '/assets/css/wp-admin-options.css';
         if ( file_exists( $css_file ) ) {
             echo '<style>' . file_get_contents( $css_file ) . '</style>';
+        }
+
+        // WP Admin Options JS (inline from file)
+        $js_file = dirname( __DIR__, 2 ) . '/assets/js/wp-admin-options.js';
+        if ( file_exists( $js_file ) ) {
+            echo '<script>' . file_get_contents( $js_file ) . '</script>';
         }
     }
 }

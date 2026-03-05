@@ -30,40 +30,17 @@ class DatetimeOption extends AbstractAdminOption
     public function render_script() {
         $key = esc_attr( $this->args['key'] );
         $value = trim( $this->args['value'] );
+        $date = '';
         $time = '';
         if ( !empty( $value ) ) {
             $date = date( 'Y-m-d', strtotime( $value ) );
             $time = date( 'H:i:s', strtotime( $value ) );
         }
         ?>
-        <script>
-          jQuery(document).ready(function ($) {
-
-            var app = Vue.createApp({
-
-              mounted: function () {
-                $('#<?= $key; ?> .option-wrap').fadeIn();
-              },
-
-              data: function () {
-                return {
-                  date: <?= json_encode( $date ); ?>,
-                  time: <?= json_encode( $time ); ?>,
-                }
-              },
-
-              computed: {
-                json: function () {
-                  var timeString = this.date + ' ' + this.time;
-                  return timeString.trim();
-                }
-              },
-
-              methods: {
-              }
-            }).mount('#<?= $key; ?>');
-          });
-        </script>
+        <script>(function() {
+            <?php $args = [ 'key' => $key, 'date' => $date, 'time' => $time ]; ?>
+            WPAdminOptions.DateTimeOption(<?= json_encode( $args ); ?>);
+        })();</script>
         <?php
     }
 

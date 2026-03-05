@@ -23,12 +23,14 @@ class AttachmentOption extends AbstractAdminOption
         <div v-if="ids.length">
 
             <div v-for="(item, i) in media" class="wao-attachment-item"
+                 <?php if ( $multiple ) : ?>
                  :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
                  draggable="true"
                  @dragstart="dragStart(i, $event)"
                  @dragover.prevent="dragOver(i)"
                  @drop="drop(i)"
-                 @dragend="dragEnd">
+                 @dragend="dragEnd"
+                 <?php endif; ?>>
 
                 <?php if ( $multiple ) : ?>
                 <div class="wao-item-row">
@@ -74,6 +76,7 @@ class AttachmentOption extends AbstractAdminOption
     }
 
     public function render_taxonomy_field() {
+        if ( $this->render_array_error() ) return;
         wp_enqueue_media();
         $key = esc_attr( $this->args['key'] );
         ?>
@@ -89,6 +92,7 @@ class AttachmentOption extends AbstractAdminOption
     }
 
     public function render_admin_table() {
+        if ( $this->render_array_error() ) return;
         wp_enqueue_media();
         $key = esc_attr( $this->args['key'] );
         ?>
@@ -105,7 +109,7 @@ class AttachmentOption extends AbstractAdminOption
 
     public function render_script() {
         $key = esc_attr( $this->args['key'] );
-        $multiple = esc_attr( $this->args['multiple'] );
+        $multiple = (bool) $this->args['multiple'];
         $media_types = $this->args['media_types'];
 
         $data = [];
@@ -120,152 +124,10 @@ class AttachmentOption extends AbstractAdminOption
         }
 
         ?>
-        <script>
-          jQuery(document).ready(function ($) {
-
-            var frame;
-
-            var app = Vue.createApp({
-
-              data: function () {
-                return {
-                  ids: <?= json_encode( $ids ); ?>,
-                  data: <?= json_encode( $data ); ?>,
-                  dragIndex: null,
-                  dragOverIndex: null,
-                }
-              },
-
-              methods: {
-
-                clear: function () {
-                  this.ids = [];
-                  this.data = [];
-                },
-
-                openFrame: function () {
-                  if (frame) {
-                    frame.open();
-                  }
-                  frame = wp.media({
-                    frame: 'select',
-                    title: <?= json_encode( $this->args['label'] ); ?>,
-                    button: { text: 'Select' },
-                    multiple: <?= $multiple ? 'true' : 'false'; ?>,
-                    library: {
-                      type: <?= json_encode( $media_types ); ?>
-                    }
-                  })
-                  .on('select', this.selectItems);
-                  frame.open();
-                },
-
-                selectItems: function () {
-                  <?php if ( ! $multiple ) : ?>
-                  this.clear();
-                  <?php endif; ?>
-                  var attachments = frame.state().get('selection').toJSON();
-                  for (var i in attachments) {
-                    var id = Number(attachments[ i ].id);
-                    if (-1 !== this.ids.indexOf(id)) {
-                      continue;
-                    }
-                    this.ids.push(id);
-                    this.data.push(attachments[ i ]);
-                  }
-                  frame.close();
-                },
-
-                removeItem: function (id) {
-                  id = Number(id);
-                  this.ids.splice(this.ids.indexOf(id), 1);
-                },
-
-                canMoveUp: function (id) {
-                  id = Number(id);
-                  var index = this.ids.indexOf(id);
-                  return index > 0;
-                },
-
-                canMoveDown: function (id) {
-                  id = Number(id);
-                  var index = this.ids.indexOf(id);
-                  return index < this.ids.length - 1;
-                },
-
-                moveUp: function (id) {
-                  id = Number(id);
-                  var index = this.ids.indexOf(id);
-                  if (this.canMoveUp(id)) {
-                    var prev = this.ids[ index - 1 ];
-                    this.ids.splice(index - 1, 2, id, prev);
-                  }
-                },
-
-                moveDown: function (id) {
-                  id = Number(id);
-                  var index = this.ids.indexOf(id);
-                  if (this.canMoveDown(id)) {
-                    var next = this.ids[ index + 1 ];
-                    this.ids.splice(index, 2, next, id);
-                  }
-                },
-
-                getType: function (item) {
-                  switch (item.type) {
-                    case 'image':
-                      return 'Image';
-                      break;
-                    case 'video':
-                      return 'Video';
-                      break;
-                    default:
-                      //return item.type;
-                      return 'Other';
-                  }
-                },
-
-                dragStart: function (index, event) {
-                  this.dragIndex = index;
-                  event.dataTransfer.effectAllowed = 'move';
-                },
-                dragOver: function (index) {
-                  this.dragOverIndex = index;
-                },
-                drop: function (index) {
-                  if (this.dragIndex === null || this.dragIndex === index) return;
-                  var id = this.ids.splice(this.dragIndex, 1)[0];
-                  this.ids.splice(index, 0, id);
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-                dragEnd: function () {
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-              },
-
-              computed: {
-                json: function () {
-                  return JSON.stringify(this.ids);
-                },
-
-                media: function () {
-                  var data = this.data;
-                  return this.ids.map(function (id) {
-                    for (var i in data) {
-                      if (data[ i ] && id == data[ i ].id) {
-                        return data[ i ];
-                      }
-                    }
-                  }).filter(function (item) {
-                    return item;
-                  });
-                }
-              }
-            }).mount('#<?= $key; ?>');
-          });
-        </script>
+        <script>(function() {
+            <?php $args = [ 'key' => $key, 'ids' => $ids, 'data' => $data, 'multiple' => $multiple, 'mediaTypes' => $media_types, 'label' => $this->args['label'] ]; ?>
+            WPAdminOptions.AttachmentOption(<?= json_encode( $args ); ?>);
+        })();</script>
         <?php
     }
 

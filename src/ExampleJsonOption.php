@@ -5,6 +5,7 @@ namespace Zawntech\WPAdminOptions;
 class ExampleJsonOption extends AbstractAdminOption
 {
     public function render_admin_table() {
+        if ( $this->render_array_error() ) return;
         $key = esc_attr( $this->args['key'] );
         ?>
         <tr id="<?= $key; ?>">
@@ -72,92 +73,49 @@ class ExampleJsonOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         ?>
         <script>
-          jQuery(document).ready(function ($) {
-
-            var app = Vue.createApp({
-
-              mounted: function () {
-                $('#<?= $key; ?> .option-wrap').fadeIn();
-              },
-
-              data: function () {
-                return {
-                  items: <?= json_encode( $this->args['value'] ); ?>,
-                  dragIndex: null,
-                  dragOverIndex: null,
-                }
-              },
-
-              computed: {
-
-                json: function () {
-                  return JSON.stringify(this.items);
-                }
-
-              },
-
-              methods: {
-
-                addItem: function () {
-                  this.items.push({
-                    id: Date.now(),
-                    first_name: '',
-                    last_name: '',
-                    description: '',
-                  });
-                },
-
-                removeItem: function (item) {
-                  this.items.splice(this.items.indexOf(item), 1);
-                },
-
-                canMoveUp: function (item) {
-                  var index = this.items.indexOf(item);
-                  return index > 0;
-                },
-
-                canMoveDown: function (item) {
-                  var index = this.items.indexOf(item);
-                  return index < this.items.length - 1;
-                },
-
-                moveUp: function (item) {
-                  var index = this.items.indexOf(item);
-                  if (this.canMoveUp(item)) {
-                    var prev = this.items[ index - 1 ];
-                    this.items.splice(index - 1, 2, item, prev);
+          /**
+           * Example: extend WPAdminOptions with a custom JSON option type.
+           * Uses the shared _dragMixin, _itemMixin, and _merge helpers from the global namespace.
+           */
+          WPAdminOptions.ExampleJsonOption = function (config) {
+            jQuery(document).ready(function ($) {
+              var opts = WPAdminOptions._merge(
+                WPAdminOptions._dragMixin(),
+                WPAdminOptions._itemMixin(null, 'items'),
+                {
+                  data: function () {
+                    return {
+                      items: config.items
+                    };
+                  },
+                  computed: {
+                    json: function () {
+                      return JSON.stringify(this.items);
+                    }
+                  },
+                  methods: {
+                    // Override _itemMixin's addItem to push a new object instead of selecting from a list.
+                    addItem: function () {
+                      this.items.push({
+                        id: Date.now(),
+                        first_name: '',
+                        last_name: '',
+                        description: ''
+                      });
+                    }
+                  },
+                  mounted: function () {
+                    $('#' + config.key + ' .option-wrap').fadeIn();
                   }
-                },
-
-                moveDown: function (item) {
-                  var index = this.items.indexOf(item);
-                  if (this.canMoveDown(item)) {
-                    var next = this.items[ index + 1 ];
-                    this.items.splice(index, 2, next, item);
-                  }
-                },
-
-                dragStart: function (index, event) {
-                  this.dragIndex = index;
-                  event.dataTransfer.effectAllowed = 'move';
-                },
-                dragOver: function (index) {
-                  this.dragOverIndex = index;
-                },
-                drop: function (index) {
-                  if (this.dragIndex === null || this.dragIndex === index) return;
-                  var item = this.items.splice(this.dragIndex, 1)[0];
-                  this.items.splice(index, 0, item);
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-                dragEnd: function () {
-                  this.dragIndex = null;
-                  this.dragOverIndex = null;
-                },
-              }
-            }).mount('#<?= $key; ?>');
-          });
+                }
+              );
+              Vue.createApp(opts).mount('#' + config.key);
+            });
+          };
+          (function() {
+            <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
+            WPAdminOptions.ExampleJsonOption(<?= json_encode( $args ); ?>);
+          })();
         </script>
         <?php
     }
