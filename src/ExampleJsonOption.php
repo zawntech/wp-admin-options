@@ -72,51 +72,48 @@ class ExampleJsonOption extends AbstractAdminOption
     public function render_script() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>
+        <script>window.addEventListener('load', function() {
           /**
            * Example: extend WPAdminOptions with a custom JSON option type.
            * Uses the shared _dragMixin, _itemMixin, and _merge helpers from the global namespace.
            */
           WPAdminOptions.ExampleJsonOption = function (config) {
-            jQuery(document).ready(function ($) {
-              var opts = WPAdminOptions._merge(
-                WPAdminOptions._dragMixin(),
-                WPAdminOptions._itemMixin(null, 'items'),
-                {
-                  data: function () {
-                    return {
-                      items: config.items
-                    };
-                  },
-                  computed: {
-                    json: function () {
-                      return JSON.stringify(this.items);
-                    }
-                  },
-                  methods: {
-                    // Override _itemMixin's addItem to push a new object instead of selecting from a list.
-                    addItem: function () {
-                      this.items.push({
-                        id: Date.now(),
-                        first_name: '',
-                        last_name: '',
-                        description: ''
-                      });
-                    }
-                  },
-                  mounted: function () {
-                    $('#' + config.key + ' .option-wrap').fadeIn();
+            var $ = jQuery;
+            var opts = WPAdminOptions._merge(
+              WPAdminOptions._dragMixin(),
+              WPAdminOptions._itemMixin(null, 'items'),
+              {
+                data: function () {
+                  return {
+                    items: config.items
+                  };
+                },
+                computed: {
+                  json: function () {
+                    return JSON.stringify(this.items);
                   }
+                },
+                methods: {
+                  // Override _itemMixin's addItem to push a new object instead of selecting from a list.
+                  addItem: function () {
+                    this.items.push({
+                      id: Date.now(),
+                      first_name: '',
+                      last_name: '',
+                      description: ''
+                    });
+                  }
+                },
+                mounted: function () {
+                  $('#' + config.key + ' .option-wrap').fadeIn();
                 }
-              );
-              Vue.createApp(opts).mount('#' + config.key);
-            });
+              }
+            );
+            Vue.createApp(opts).mount('#' + config.key);
           };
-          window.addEventListener('load', function() {
-            <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
-            WPAdminOptions.ExampleJsonOption(<?= json_encode( $args ); ?>);
-          });
-        </script>
+          <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
+          WPAdminOptions.ExampleJsonOption(<?= json_encode( $args ); ?>);
+        });</script>
         <?php
     }
 

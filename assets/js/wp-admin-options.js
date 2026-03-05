@@ -213,11 +213,9 @@
      * @param {string} config.key
      */
     BooleanCheckboxOption: function (config) {
-      $(document).ready(function () {
-        $('input#' + config.key).on('change', function () {
-          var checked = $(this).is(':checked');
-          $('input[name="' + config.key + '"]').val(checked ? 1 : 0);
-        });
+      $('input#' + config.key).on('change', function () {
+        var checked = $(this).is(':checked');
+        $('input[name="' + config.key + '"]').val(checked ? 1 : 0);
       });
     },
 
@@ -231,19 +229,17 @@
      * @param {string} config.type - 'default' or 'spectrum'
      */
     ColorOption: function (config) {
-      $(document).ready(function () {
-        var selector = 'input[name="' + config.key + '"]';
-        if (config.type === 'spectrum') {
-          $(selector).spectrum({
-            showInput: true,
-            showAlpha: true,
-            preferredFormat: 'hex',
-            allowEmpty: true
-          });
-        } else {
-          $(selector).wpColorPicker();
-        }
-      });
+      var selector = 'input[name="' + config.key + '"]';
+      if (config.type === 'spectrum') {
+        $(selector).spectrum({
+          showInput: true,
+          showAlpha: true,
+          preferredFormat: 'hex',
+          allowEmpty: true
+        });
+      } else {
+        $(selector).wpColorPicker();
+      }
     },
 
     /* -------------------------------------------------------------- */
@@ -259,37 +255,33 @@
      */
     SelectOption: function (config) {
       if (config.mode === 'single') {
-        $(document).ready(function () {
-          $('#' + config.key + '-wrap .select2').select2();
-        });
+        $('#' + config.key + '-wrap .select2').select2();
         return;
       }
 
-      $(document).ready(function () {
-        var opts = _merge(
-          _dragMixin(),
-          _itemMixin(config.key, 'items', 'Please select an item to add.'),
-          {
-            data: function () {
-              return {
-                selectedPost: '',
-                items: config.items,
-                posts: config.options
-              };
-            },
-            computed: {
-              json: function () { return JSON.stringify(this.items); }
-            },
-            methods: {
-              formatPostTitle: function (postId) {
-                return this.posts[postId];
-              }
-            },
-            mounted: _select2Mount(config.key)
-          }
-        );
-        Vue.createApp(opts).mount('#' + config.key + '-wrap');
-      });
+      var opts = _merge(
+        _dragMixin(),
+        _itemMixin(config.key, 'items', 'Please select an item to add.'),
+        {
+          data: function () {
+            return {
+              selectedPost: '',
+              items: config.items,
+              posts: config.options
+            };
+          },
+          computed: {
+            json: function () { return JSON.stringify(this.items); }
+          },
+          methods: {
+            formatPostTitle: function (postId) {
+              return this.posts[postId];
+            }
+          },
+          mounted: _select2Mount(config.key)
+        }
+      );
+      Vue.createApp(opts).mount('#' + config.key + '-wrap');
     },
 
     /* -------------------------------------------------------------- */
@@ -307,43 +299,39 @@
      */
     PostTypeSelectOption: function (config) {
       if (config.mode === 'single') {
-        $(document).ready(function () {
-          $('#' + config.key + '-wrap .select2').select2();
-        });
+        $('#' + config.key + '-wrap .select2').select2();
         return;
       }
 
-      $(document).ready(function () {
-        var opts = _merge(
-          _dragMixin(),
-          _itemMixin(config.key, 'items', 'Please select a post to add.'),
-          {
-            data: function () {
-              return {
-                selectedPost: '',
-                items: config.items,
-                posts: config.options
-              };
-            },
-            computed: {
-              json: function () { return JSON.stringify(this.items); }
-            },
-            methods: {
-              formatPostTitle: function (postId, index) {
-                var count = (index + 1),
-                  postTitle = this.posts[postId],
-                  editPostUrl = config.adminUrl + 'post.php?post=' + postId + '&action=edit',
-                  editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>',
-                  viewPostUrl = config.homeUrl + '?p=' + postId,
-                  viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="wao-link">[View]</a>';
-                return ['#' + count, '-', postTitle, editPostLink, viewPostLink].join(' ');
-              }
-            },
-            mounted: _select2Mount(config.key)
-          }
-        );
-        Vue.createApp(opts).mount('#' + config.key + '-wrap');
-      });
+      var opts = _merge(
+        _dragMixin(),
+        _itemMixin(config.key, 'items', 'Please select a post to add.'),
+        {
+          data: function () {
+            return {
+              selectedPost: '',
+              items: config.items,
+              posts: config.options
+            };
+          },
+          computed: {
+            json: function () { return JSON.stringify(this.items); }
+          },
+          methods: {
+            formatPostTitle: function (postId, index) {
+              var count = (index + 1),
+                postTitle = this.posts[postId],
+                editPostUrl = config.adminUrl + 'post.php?post=' + postId + '&action=edit',
+                editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>',
+                viewPostUrl = config.homeUrl + '?p=' + postId,
+                viewPostLink = '<a href="' + viewPostUrl + '" target="_blank" class="wao-link">[View]</a>';
+              return ['#' + count, '-', postTitle, editPostLink, viewPostLink].join(' ');
+            }
+          },
+          mounted: _select2Mount(config.key)
+        }
+      );
+      Vue.createApp(opts).mount('#' + config.key + '-wrap');
     },
 
     /* -------------------------------------------------------------- */
@@ -362,42 +350,38 @@
      */
     TaxonomySelectOption: function (config) {
       if (config.mode === 'single') {
-        $(document).ready(function () {
-          $('#' + config.key + '-wrap .select2').select2();
-        });
+        $('#' + config.key + '-wrap .select2').select2();
         return;
       }
 
-      $(document).ready(function () {
-        var taxonomy = config.taxonomy;
-        var opts = _merge(
-          _dragMixin(),
-          _itemMixin(config.key, 'items', 'Please select a term to add.'),
-          {
-            data: function () {
-              return {
-                selectedPost: '',
-                items: config.items,
-                posts: config.options
-              };
-            },
-            computed: {
-              json: function () { return JSON.stringify(this.items); }
-            },
-            methods: {
-              formatPostTitle: function (postId, index) {
-                var count = (index + 1),
-                  postTitle = this.posts[postId],
-                  editPostUrl = config.adminUrl + 'term.php?taxonomy=' + taxonomy + '&tag_ID=' + postId,
-                  editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>';
-                return ['#' + count, '-', postTitle, editPostLink].join(' ');
-              }
-            },
-            mounted: _select2Mount(config.key)
-          }
-        );
-        Vue.createApp(opts).mount('#' + config.key + '-wrap');
-      });
+      var taxonomy = config.taxonomy;
+      var opts = _merge(
+        _dragMixin(),
+        _itemMixin(config.key, 'items', 'Please select a term to add.'),
+        {
+          data: function () {
+            return {
+              selectedPost: '',
+              items: config.items,
+              posts: config.options
+            };
+          },
+          computed: {
+            json: function () { return JSON.stringify(this.items); }
+          },
+          methods: {
+            formatPostTitle: function (postId, index) {
+              var count = (index + 1),
+                postTitle = this.posts[postId],
+                editPostUrl = config.adminUrl + 'term.php?taxonomy=' + taxonomy + '&tag_ID=' + postId,
+                editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>';
+              return ['#' + count, '-', postTitle, editPostLink].join(' ');
+            }
+          },
+          mounted: _select2Mount(config.key)
+        }
+      );
+      Vue.createApp(opts).mount('#' + config.key + '-wrap');
     },
 
     /* -------------------------------------------------------------- */
@@ -414,41 +398,37 @@
      */
     UserSelectOption: function (config) {
       if (config.mode === 'single') {
-        $(document).ready(function () {
-          $('#' + config.key + '-wrap .select2').select2();
-        });
+        $('#' + config.key + '-wrap .select2').select2();
         return;
       }
 
-      $(document).ready(function () {
-        var opts = _merge(
-          _dragMixin(),
-          _itemMixin(config.key, 'items', 'Please select a user to add.'),
-          {
-            data: function () {
-              return {
-                selectedPost: '',
-                items: config.items,
-                posts: config.options
-              };
-            },
-            computed: {
-              json: function () { return JSON.stringify(this.items); }
-            },
-            methods: {
-              formatPostTitle: function (postId, index) {
-                var count = (index + 1),
-                  postTitle = this.posts[postId],
-                  editPostUrl = config.adminUrl + 'user-edit.php?user_id=' + postId + '&action=edit',
-                  editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>';
-                return ['#' + count, '-', postTitle, editPostLink].join(' ');
-              }
-            },
-            mounted: _select2Mount(config.key)
-          }
-        );
-        Vue.createApp(opts).mount('#' + config.key + '-wrap');
-      });
+      var opts = _merge(
+        _dragMixin(),
+        _itemMixin(config.key, 'items', 'Please select a user to add.'),
+        {
+          data: function () {
+            return {
+              selectedPost: '',
+              items: config.items,
+              posts: config.options
+            };
+          },
+          computed: {
+            json: function () { return JSON.stringify(this.items); }
+          },
+          methods: {
+            formatPostTitle: function (postId, index) {
+              var count = (index + 1),
+                postTitle = this.posts[postId],
+                editPostUrl = config.adminUrl + 'user-edit.php?user_id=' + postId + '&action=edit',
+                editPostLink = '<a href="' + editPostUrl + '" target="_blank" class="wao-link">[Edit]</a>';
+              return ['#' + count, '-', postTitle, editPostLink].join(' ');
+            }
+          },
+          mounted: _select2Mount(config.key)
+        }
+      );
+      Vue.createApp(opts).mount('#' + config.key + '-wrap');
     },
 
     /* -------------------------------------------------------------- */
@@ -465,133 +445,130 @@
      * @param {string}  config.label
      */
     AttachmentOption: function (config) {
-      $(document).ready(function () {
+      var frame;
 
-        var frame;
+      var dragData = _dragMixin();
+      // AttachmentOption uses `ids` array instead of `items` for drag reordering.
+      dragData.methods.drop = function (index) {
+        if (this.dragIndex === null || this.dragIndex === index) return;
+        var id = this.ids.splice(this.dragIndex, 1)[0];
+        this.ids.splice(index, 0, id);
+        this.dragIndex = null;
+        this.dragOverIndex = null;
+      };
 
-        var dragData = _dragMixin();
-        // AttachmentOption uses `ids` array instead of `items` for drag reordering.
-        dragData.methods.drop = function (index) {
-          if (this.dragIndex === null || this.dragIndex === index) return;
-          var id = this.ids.splice(this.dragIndex, 1)[0];
-          this.ids.splice(index, 0, id);
-          this.dragIndex = null;
-          this.dragOverIndex = null;
-        };
+      var opts = _merge(
+        dragData,
+        {
+          data: function () {
+            return {
+              ids: config.ids,
+              data: config.data
+            };
+          },
 
-        var opts = _merge(
-          dragData,
-          {
-            data: function () {
-              return {
-                ids: config.ids,
-                data: config.data
-              };
+          methods: {
+
+            clear: function () {
+              this.ids = [];
+              this.data = [];
             },
 
-            methods: {
-
-              clear: function () {
-                this.ids = [];
-                this.data = [];
-              },
-
-              openFrame: function () {
-                if (frame) {
-                  frame.open();
-                }
-                frame = wp.media({
-                  frame: 'select',
-                  title: config.label,
-                  button: { text: 'Select' },
-                  multiple: config.multiple,
-                  library: { type: config.mediaTypes }
-                })
-                .on('select', this.selectItems);
+            openFrame: function () {
+              if (frame) {
                 frame.open();
-              },
+              }
+              frame = wp.media({
+                frame: 'select',
+                title: config.label,
+                button: { text: 'Select' },
+                multiple: config.multiple,
+                library: { type: config.mediaTypes }
+              })
+              .on('select', this.selectItems);
+              frame.open();
+            },
 
-              selectItems: function () {
-                if (!config.multiple) {
-                  this.clear();
+            selectItems: function () {
+              if (!config.multiple) {
+                this.clear();
+              }
+              var attachments = frame.state().get('selection').toJSON();
+              for (var i in attachments) {
+                var id = Number(attachments[i].id);
+                if (-1 !== this.ids.indexOf(id)) {
+                  continue;
                 }
-                var attachments = frame.state().get('selection').toJSON();
-                for (var i in attachments) {
-                  var id = Number(attachments[i].id);
-                  if (-1 !== this.ids.indexOf(id)) {
-                    continue;
-                  }
-                  this.ids.push(id);
-                  this.data.push(attachments[i]);
-                }
-                frame.close();
-              },
+                this.ids.push(id);
+                this.data.push(attachments[i]);
+              }
+              frame.close();
+            },
 
-              removeItem: function (id) {
-                id = Number(id);
-                this.ids.splice(this.ids.indexOf(id), 1);
-              },
+            removeItem: function (id) {
+              id = Number(id);
+              this.ids.splice(this.ids.indexOf(id), 1);
+            },
 
-              canMoveUp: function (id) {
-                id = Number(id);
-                return this.ids.indexOf(id) > 0;
-              },
+            canMoveUp: function (id) {
+              id = Number(id);
+              return this.ids.indexOf(id) > 0;
+            },
 
-              canMoveDown: function (id) {
-                id = Number(id);
-                return this.ids.indexOf(id) < this.ids.length - 1;
-              },
+            canMoveDown: function (id) {
+              id = Number(id);
+              return this.ids.indexOf(id) < this.ids.length - 1;
+            },
 
-              moveUp: function (id) {
-                id = Number(id);
-                var index = this.ids.indexOf(id);
-                if (this.canMoveUp(id)) {
-                  var prev = this.ids[index - 1];
-                  this.ids.splice(index - 1, 2, id, prev);
-                }
-              },
-
-              moveDown: function (id) {
-                id = Number(id);
-                var index = this.ids.indexOf(id);
-                if (this.canMoveDown(id)) {
-                  var next = this.ids[index + 1];
-                  this.ids.splice(index, 2, next, id);
-                }
-              },
-
-              getType: function (item) {
-                switch (item.type) {
-                  case 'image': return 'Image';
-                  case 'video': return 'Video';
-                  default: return 'Other';
-                }
+            moveUp: function (id) {
+              id = Number(id);
+              var index = this.ids.indexOf(id);
+              if (this.canMoveUp(id)) {
+                var prev = this.ids[index - 1];
+                this.ids.splice(index - 1, 2, id, prev);
               }
             },
 
-            computed: {
-              json: function () {
-                return JSON.stringify(this.ids);
-              },
+            moveDown: function (id) {
+              id = Number(id);
+              var index = this.ids.indexOf(id);
+              if (this.canMoveDown(id)) {
+                var next = this.ids[index + 1];
+                this.ids.splice(index, 2, next, id);
+              }
+            },
 
-              media: function () {
-                var data = this.data;
-                return this.ids.map(function (id) {
-                  for (var i in data) {
-                    if (data[i] && id == data[i].id) {
-                      return data[i];
-                    }
-                  }
-                }).filter(function (item) {
-                  return item;
-                });
+            getType: function (item) {
+              switch (item.type) {
+                case 'image': return 'Image';
+                case 'video': return 'Video';
+                default: return 'Other';
               }
             }
-          }
-        );
+          },
 
-        Vue.createApp(opts).mount('#' + config.key);
-      });
+          computed: {
+            json: function () {
+              return JSON.stringify(this.ids);
+            },
+
+            media: function () {
+              var data = this.data;
+              return this.ids.map(function (id) {
+                for (var i in data) {
+                  if (data[i] && id == data[i].id) {
+                    return data[i];
+                  }
+                }
+              }).filter(function (item) {
+                return item;
+              });
+            }
+          }
+        }
+      );
+
+      Vue.createApp(opts).mount('#' + config.key);
     },
 
     /* -------------------------------------------------------------- */
@@ -605,25 +582,23 @@
      * @param {string} config.time
      */
     DateTimeOption: function (config) {
-      $(document).ready(function () {
-        Vue.createApp({
-          data: function () {
-            return {
-              date: config.date,
-              time: config.time
-            };
-          },
-          computed: {
-            json: function () {
-              var timeString = this.date + ' ' + this.time;
-              return timeString.trim();
-            }
-          },
-          mounted: function () {
-            $('#' + config.key + ' .option-wrap').fadeIn();
+      Vue.createApp({
+        data: function () {
+          return {
+            date: config.date,
+            time: config.time
+          };
+        },
+        computed: {
+          json: function () {
+            var timeString = this.date + ' ' + this.time;
+            return timeString.trim();
           }
-        }).mount('#' + config.key);
-      });
+        },
+        mounted: function () {
+          $('#' + config.key + ' .option-wrap').fadeIn();
+        }
+      }).mount('#' + config.key);
     },
 
     /* -------------------------------------------------------------- */
@@ -636,41 +611,39 @@
      * @param {number} config.value - Total duration in minutes.
      */
     DurationOption: function (config) {
-      $(document).ready(function () {
-        Vue.createApp({
-          data: function () {
-            return {
-              minutes: 0,
-              hours: 0,
-              days: '',
-              custom: false,
-              options: {
-                minutes: [0, 15, 30, 45],
-                hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-              }
-            };
-          },
-          computed: {
-            json: function () {
-              return JSON.stringify(this.value);
-            },
-            value: function () {
-              return this.minutes + (60 * this.hours);
+      Vue.createApp({
+        data: function () {
+          return {
+            minutes: 0,
+            hours: 0,
+            days: '',
+            custom: false,
+            options: {
+              minutes: [0, 15, 30, 45],
+              hours: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
             }
+          };
+        },
+        computed: {
+          json: function () {
+            return JSON.stringify(this.value);
           },
-          mounted: function () {
-            $('#' + config.key + ' .option-wrap').fadeIn();
-            var total = Number(config.value),
-              hours = Math.floor(total / 60),
-              mins = total % 60;
-            this.hours = hours;
-            this.minutes = mins;
-            if (this.options.hours.indexOf(hours) === -1 || this.options.minutes.indexOf(mins) === -1) {
-              this.custom = true;
-            }
+          value: function () {
+            return this.minutes + (60 * this.hours);
           }
-        }).mount('#' + config.key);
-      });
+        },
+        mounted: function () {
+          $('#' + config.key + ' .option-wrap').fadeIn();
+          var total = Number(config.value),
+            hours = Math.floor(total / 60),
+            mins = total % 60;
+          this.hours = hours;
+          this.minutes = mins;
+          if (this.options.hours.indexOf(hours) === -1 || this.options.minutes.indexOf(mins) === -1) {
+            this.custom = true;
+          }
+        }
+      }).mount('#' + config.key);
     }
 
   };

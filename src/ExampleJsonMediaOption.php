@@ -94,78 +94,75 @@ class ExampleJsonMediaOption extends AbstractAdminOption
         wp_enqueue_media();
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>
+        <script>window.addEventListener('load', function() {
           /**
            * Example: extend WPAdminOptions with a custom JSON + Media option type.
            * Uses the shared _dragMixin, _itemMixin, and _merge helpers from the global namespace,
            * and adds wp.media() integration for per-item image selection.
            */
           WPAdminOptions.ExampleJsonMediaOption = function (config) {
-            jQuery(document).ready(function ($) {
-              var frame;
-              var opts = WPAdminOptions._merge(
-                WPAdminOptions._dragMixin(),
-                WPAdminOptions._itemMixin(null, 'items'),
-                {
-                  data: function () {
-                    return {
-                      items: config.items,
-                      selectedItem: null,
-                      maxItems: 2
-                    };
-                  },
-                  computed: {
-                    json: function () {
-                      return JSON.stringify(this.items);
-                    }
-                  },
-                  methods: {
-                    // Override _itemMixin's addItem to push a new object instead of selecting from a list.
-                    addItem: function () {
-                      this.items.push({
-                        id: Date.now(),
-                        url: '',
-                        text: '',
-                        icon_id: '',
-                        image_id: '',
-                        image_url: '',
-                        button_text: '',
-                        image_alt_text: '',
-                      });
-                    },
-                    openFrame: function (item) {
-                      var self = this;
-                      self.selectedItem = item;
-                      if (frame) {
-                        frame.open();
-                        return;
-                      }
-                      frame = wp.media({
-                        title: 'Select Media',
-                        button: { text: 'Select' },
-                        multiple: false
-                      });
-                      frame.on('select', function () {
-                        var attachment = frame.state().get('selection').first().toJSON();
-                        self.selectedItem.image_id = attachment.id;
-                        self.selectedItem.image_url = attachment.url;
-                      });
-                      frame.open();
-                    }
-                  },
-                  mounted: function () {
-                    $('#' + config.key + ' .option-wrap').fadeIn();
+            var $ = jQuery;
+            var frame;
+            var opts = WPAdminOptions._merge(
+              WPAdminOptions._dragMixin(),
+              WPAdminOptions._itemMixin(null, 'items'),
+              {
+                data: function () {
+                  return {
+                    items: config.items,
+                    selectedItem: null,
+                    maxItems: 2
+                  };
+                },
+                computed: {
+                  json: function () {
+                    return JSON.stringify(this.items);
                   }
+                },
+                methods: {
+                  // Override _itemMixin's addItem to push a new object instead of selecting from a list.
+                  addItem: function () {
+                    this.items.push({
+                      id: Date.now(),
+                      url: '',
+                      text: '',
+                      icon_id: '',
+                      image_id: '',
+                      image_url: '',
+                      button_text: '',
+                      image_alt_text: '',
+                    });
+                  },
+                  openFrame: function (item) {
+                    var self = this;
+                    self.selectedItem = item;
+                    if (frame) {
+                      frame.open();
+                      return;
+                    }
+                    frame = wp.media({
+                      title: 'Select Media',
+                      button: { text: 'Select' },
+                      multiple: false
+                    });
+                    frame.on('select', function () {
+                      var attachment = frame.state().get('selection').first().toJSON();
+                      self.selectedItem.image_id = attachment.id;
+                      self.selectedItem.image_url = attachment.url;
+                    });
+                    frame.open();
+                  }
+                },
+                mounted: function () {
+                  $('#' + config.key + ' .option-wrap').fadeIn();
                 }
-              );
-              Vue.createApp(opts).mount('#' + config.key);
-            });
+              }
+            );
+            Vue.createApp(opts).mount('#' + config.key);
           };
-          window.addEventListener('load', function() {
-            <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
-            WPAdminOptions.ExampleJsonMediaOption(<?= json_encode( $args ); ?>);
-          });
-        </script>
+          <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
+          WPAdminOptions.ExampleJsonMediaOption(<?= json_encode( $args ); ?>);
+        });</script>
         <?php
     }
 

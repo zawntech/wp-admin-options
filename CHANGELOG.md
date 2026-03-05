@@ -29,7 +29,8 @@ All notable changes to this project will be documented in this file.
 - Extracted shared rendering into helper methods: `TextareaOption::render_textarea_content()`, `AttachmentOption::render_attachment_content()`
 - Reduced code duplication between `render_admin_table()` and `render_taxonomy_field()` contexts
 - Extracted all inline `<script>` blocks into `assets/js/wp-admin-options.js` with `WPAdminOptions` namespace
-- Each PHP script call wrapped in IIFE with consolidated `json_encode($args)` for clean data passing
+- Each PHP script call wrapped in `window.addEventListener('load', ...)` with consolidated `json_encode($args)` for clean data passing
+- Removed all redundant `$(document).ready` / `jQuery(document).ready` wrappers from JS (window load guarantees DOM readiness)
 - ExampleJson options refactored as extension pattern examples using `WPAdminOptions._merge()` and `_dragMixin()`/`_itemMixin()`
 - Disabled drag-and-drop attributes on singular AttachmentOption (non-multiple mode)
 
