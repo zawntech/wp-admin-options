@@ -60,10 +60,10 @@ class ColorOption extends AbstractAdminOption
         add_action( 'admin_footer', function() use ( $color_picker_type ) {
             $key = esc_attr( $this->args['key'] );
             ?>
-            <script>(function() {
+            <script>window.addEventListener('load', function() {
                 <?php $args = [ 'key' => $key, 'type' => $color_picker_type ]; ?>
                 WPAdminOptions.ColorOption(<?= json_encode( $args ); ?>);
-            })();</script>
+            });</script>
             <?php
         } );
     }

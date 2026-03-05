@@ -59,10 +59,10 @@ class DurationOption extends AbstractAdminOption
     public function render_script() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'value' => $this->args['value'] ]; ?>
             WPAdminOptions.DurationOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 

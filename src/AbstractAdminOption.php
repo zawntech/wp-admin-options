@@ -157,10 +157,10 @@ abstract class AbstractAdminOption
             <span class="wao-copy-icon">&#x2398;</span>
             <span class="wao-copy-done" style="display:none;">&#x2713;</span>
         </button>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key ]; ?>
             WPAdminOptions.CopyButton(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 

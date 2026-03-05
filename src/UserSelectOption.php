@@ -94,10 +94,10 @@ class UserSelectOption extends AbstractAdminOption
                     printf( '<p><code>%s</code></p>', $args['description'] );
                 }
                 ?>
-                <script>(function() {
+                <script>window.addEventListener('load', function() {
                     <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
                     WPAdminOptions.UserSelectOption(<?= json_encode( $args ); ?>);
-                })();</script>
+                });</script>
             </td>
         </tr>
         <?php
@@ -167,10 +167,10 @@ class UserSelectOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
 
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url() ]; ?>
             WPAdminOptions.UserSelectOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 }

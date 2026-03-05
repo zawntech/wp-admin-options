@@ -80,10 +80,10 @@ class PostTypeSelectOption extends AbstractAdminOption
                     printf( '<p><code>%s</code></p>', $args['description'] );
                 }
                 ?>
-                <script>(function() {
+                <script>window.addEventListener('load', function() {
                     <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
                     WPAdminOptions.PostTypeSelectOption(<?= json_encode( $args ); ?>);
-                })();</script>
+                });</script>
             </td>
         </tr>
         <?php
@@ -153,10 +153,10 @@ class PostTypeSelectOption extends AbstractAdminOption
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url(), 'homeUrl' => home_url() ]; ?>
             WPAdminOptions.PostTypeSelectOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 

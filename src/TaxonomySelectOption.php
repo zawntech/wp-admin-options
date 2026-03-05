@@ -77,10 +77,15 @@ class TaxonomySelectOption extends AbstractAdminOption
                     printf( '<p><code>%s</code></p>', $args['description'] );
                 }
                 ?>
-                <script>(function() {
-                    <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
+                <script>window.addEventListener('load', function() {
+                    <?php
+                    $args = [
+                        'key' => $key,
+                        'mode' => 'single',
+                    ];
+                    ?>
                     WPAdminOptions.TaxonomySelectOption(<?= json_encode( $args ); ?>);
-                })();</script>
+                });</script>
             </td>
         </tr>
         <?php
@@ -148,10 +153,20 @@ class TaxonomySelectOption extends AbstractAdminOption
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>(function() {
-            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url(), 'homeUrl' => home_url(), 'taxonomy' => $this->args['taxonomy'] ]; ?>
+        <script>window.addEventListener('load', function() {
+            <?php
+            $args = [
+                'key' => $key,
+                'mode' => 'multiple',
+                'items' => $this->get_args()['value'],
+                'options' => $this->get_args()['options'],
+                'adminUrl' => admin_url(),
+                'homeUrl' => home_url(),
+                'taxonomy' => $this->args['taxonomy']
+            ];
+            ?>
             WPAdminOptions.TaxonomySelectOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 

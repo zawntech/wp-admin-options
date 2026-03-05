@@ -138,10 +138,10 @@ class SelectOption extends AbstractAdminOption
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'] ]; ?>
             WPAdminOptions.SelectOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 
@@ -154,10 +154,10 @@ class SelectOption extends AbstractAdminOption
     public function trigger_select2() {
         $key = $this->args['key'];
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
             WPAdminOptions.SelectOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 }

@@ -124,10 +124,10 @@ class AttachmentOption extends AbstractAdminOption
         }
 
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'ids' => $ids, 'data' => $data, 'multiple' => $multiple, 'mediaTypes' => $media_types, 'label' => $this->args['label'] ]; ?>
             WPAdminOptions.AttachmentOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 

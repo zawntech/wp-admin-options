@@ -161,10 +161,10 @@ class ExampleJsonMediaOption extends AbstractAdminOption
               Vue.createApp(opts).mount('#' + config.key);
             });
           };
-          (function() {
+          window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'items' => $this->args['value'] ]; ?>
             WPAdminOptions.ExampleJsonMediaOption(<?= json_encode( $args ); ?>);
-          })();
+          });
         </script>
         <?php
     }

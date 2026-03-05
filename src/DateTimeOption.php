@@ -37,10 +37,10 @@ class DatetimeOption extends AbstractAdminOption
             $time = date( 'H:i:s', strtotime( $value ) );
         }
         ?>
-        <script>(function() {
+        <script>window.addEventListener('load', function() {
             <?php $args = [ 'key' => $key, 'date' => $date, 'time' => $time ]; ?>
             WPAdminOptions.DateTimeOption(<?= json_encode( $args ); ?>);
-        })();</script>
+        });</script>
         <?php
     }
 
