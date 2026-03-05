@@ -1,12 +1,12 @@
 <?php
 
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Fields;
 
 /**
  * A checkbox option that stores 1 or 0.
  *
  * Class BooleanCheckboxOption
- * @package Zawntech\WPAdminOptions
+ * @package AllegedWizard\WPAdminOptions\Fields
  */
 class BooleanCheckboxOption extends AbstractAdminOption
 {

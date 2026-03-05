@@ -57,6 +57,14 @@ All notable changes to this project will be documented in this file.
 - Uninitialized `$date` variable in DateTimeOption when value is empty
 - Color picker panel clipped by `overflow: hidden` inside OptionsContainer — body now uses `overflow: visible` when expanded
 
+### Changed (Refactor)
+- Rebranded namespace from `Zawntech\WPAdminOptions` to `AllegedWizard\WPAdminOptions`
+- Reorganized classes into sub-namespaces: `Fields\`, `Structure\`, `Bootstrap\`, `Helpers\`
+- Moved all option classes (`*Option.php`) into `src/Fields/`
+- Moved `OptionsContainer` into `src/Structure/`
+- Extracted `render_test_options()` into `Helpers\RenderTestFields` class with proxy in `Bootstrap\WPAdminOptions`
+- Updated `composer.json` package name and PSR-4 autoload mapping
+
 ## [1.0.0]
 
 ### Added

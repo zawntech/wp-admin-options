@@ -1,8 +1,8 @@
 <?php
 
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Fields;
 
-class TaxonomySelectOption extends AbstractAdminOption
+class UserSelectOption extends AbstractAdminOption
 {
     protected $option_args = [];
 
@@ -27,17 +27,34 @@ class TaxonomySelectOption extends AbstractAdminOption
         $description = trim( $this->args['description'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
 
+        // Prepare user args.
+        $user_args = wp_parse_args( [
+            'role' => $this->args['role'],
+            'role__in' => $this->args['role__in'],
+            'meta_key' => $this->args['meta_key'],
+            'meta_value' => $this->args['meta_value'],
+            'meta_compare' => $this->args['meta_compare'],
+        ] );
+
+        // Get users...
+        $users = get_users( $user_args );
+
+        // Prepare select options.
+        $select_label = 'Select user...';
+        $multiple = $this->args['multiple'];
+        if ( $multiple ) {
+            $select_label = 'Select users...';
+        }
         $options = [
-            '' => 'Select ' . esc_attr( $this->get_taxonomy_label() ) . '...'
+            '' => $select_label
         ];
 
-        $terms = get_terms([
-            'taxonomy' => $this->args['taxonomy'],
-            'hide_empty' => false,
-        ]);
-
-        foreach( $terms as $term ) {
-            $options[$term->term_id] = $term->name;
+        foreach ( $users as $user ) {
+            $login = $user->user_login;
+            $email = $user->user_email;
+            $first = $user->first_name;
+            $last = $user->last_name;
+            $options[$user->ID] = "$login | $email | $first $last";
         }
 
         $this->option_args = [
@@ -58,7 +75,7 @@ class TaxonomySelectOption extends AbstractAdminOption
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
-            <td id="<?= $key; ?>-wrap">
+            <td id="<?= $args['key']; ?>-wrap">
                 <select
                     id="<?= $args['key']; ?>"
                     name="<?= $args['key']; ?>"
@@ -78,13 +95,8 @@ class TaxonomySelectOption extends AbstractAdminOption
                 }
                 ?>
                 <script>window.addEventListener('load', function() {
-                    <?php
-                    $args = [
-                        'key' => $key,
-                        'mode' => 'single',
-                    ];
-                    ?>
-                    WPAdminOptions.TaxonomySelectOption(<?= json_encode( $args ); ?>);
+                    <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
+                    WPAdminOptions.UserSelectOption(<?= json_encode( $args ); ?>);
                 });</script>
             </td>
         </tr>
@@ -95,6 +107,7 @@ class TaxonomySelectOption extends AbstractAdminOption
         if ( $this->render_array_error() ) return;
         $args = $this->get_args();
         $key = esc_attr( $args['key'] );
+
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
@@ -118,7 +131,7 @@ class TaxonomySelectOption extends AbstractAdminOption
                 <hr>
                 <div class="wao-items">
                     <p v-if="!items.length">
-                        No <?= strtolower( $this->get_taxonomy_label('plural') ); ?> have been selected.
+                        No users have been selected.
                     </p>
                     <div v-for="(item, i) in items" class="wao-item" :key="item"
                          :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
@@ -152,33 +165,12 @@ class TaxonomySelectOption extends AbstractAdminOption
 
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
+
         ?>
         <script>window.addEventListener('load', function() {
-            <?php
-            $args = [
-                'key' => $key,
-                'mode' => 'multiple',
-                'items' => $this->get_args()['value'],
-                'options' => $this->get_args()['options'],
-                'adminUrl' => admin_url(),
-                'homeUrl' => home_url(),
-                'taxonomy' => $this->args['taxonomy']
-            ];
-            ?>
-            WPAdminOptions.TaxonomySelectOption(<?= json_encode( $args ); ?>);
+            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url() ]; ?>
+            WPAdminOptions.UserSelectOption(<?= json_encode( $args ); ?>);
         });</script>
         <?php
-    }
-
-    public function get_taxonomy_label( $type = 'singular' ) {
-        $taxonomy = get_taxonomy( $this->args['taxonomy'] );
-        $labels = get_taxonomy_labels( $taxonomy );
-        switch ( $type ) {
-            case 'singular':
-                return $labels->singular_name;
-            case 'plural':
-                return $labels->name;
-        }
-        return $labels;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Fields;
 
 class DatetimeOption extends AbstractAdminOption
 {

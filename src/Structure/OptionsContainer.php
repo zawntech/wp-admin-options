@@ -1,6 +1,8 @@
 <?php
 
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Structure;
+
+use AllegedWizard\WPAdminOptions\Bootstrap\WPAdminOptions;
 
 class OptionsContainer
 {
@@ -14,7 +16,7 @@ class OptionsContainer
 
     public function __construct( $args = [] ) {
         $this->args = wp_parse_args( $args, $this->args );
-        Bootstrap\WPAdminOptions::init();
+        WPAdminOptions::init();
         $this->render();
     }
 

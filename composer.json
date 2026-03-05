@@ -1,5 +1,5 @@
 {
-    "name": "zawntech/wp-admin-options",
+    "name": "allegedwizard/wp-admin-options",
     "description": "A library of custom WordPress admin option classes.",
     "type": "library",
     "license": "MIT",
@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "Zawntech\\WPAdminOptions\\": "src/"
+            "AllegedWizard\\WPAdminOptions\\": "src/"
         }
     },
     "require": {}

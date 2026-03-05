@@ -1,6 +1,8 @@
 <?php
 
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Fields;
+
+use AllegedWizard\WPAdminOptions\Bootstrap\WPAdminOptions;
 
 abstract class AbstractAdminOption
 {
@@ -60,7 +62,7 @@ abstract class AbstractAdminOption
 
     public function __construct( $args = [] ) {
         if ( ! static::$initialized ) {
-            Bootstrap\WPAdminOptions::init();
+            WPAdminOptions::init();
             static::$initialized = true;
         }
 

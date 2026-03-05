@@ -1,8 +1,8 @@
 <?php
 
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Fields;
 
-class UserSelectOption extends AbstractAdminOption
+class PostTypeSelectOption extends AbstractAdminOption
 {
     protected $option_args = [];
 
@@ -27,34 +27,20 @@ class UserSelectOption extends AbstractAdminOption
         $description = trim( $this->args['description'] );
         $css_classes = esc_attr( trim( implode( ' ', $this->args['css_classes'] ) ) );
 
-        // Prepare user args.
-        $user_args = wp_parse_args( [
-            'role' => $this->args['role'],
-            'role__in' => $this->args['role__in'],
-            'meta_key' => $this->args['meta_key'],
-            'meta_value' => $this->args['meta_value'],
-            'meta_compare' => $this->args['meta_compare'],
+        $post_args = wp_parse_args( [
+            'post_type' => $this->args['post_type'],
+            'posts_per_page' => -1,
+            'orderby' => 'title',
+            'order' => 'ASC',
         ] );
 
-        // Get users...
-        $users = get_users( $user_args );
-
-        // Prepare select options.
-        $select_label = 'Select user...';
-        $multiple = $this->args['multiple'];
-        if ( $multiple ) {
-            $select_label = 'Select users...';
-        }
         $options = [
-            '' => $select_label
+            '' => 'Select ' . esc_attr( $this->get_post_type_label() ) . '...'
         ];
 
-        foreach ( $users as $user ) {
-            $login = $user->user_login;
-            $email = $user->user_email;
-            $first = $user->first_name;
-            $last = $user->last_name;
-            $options[$user->ID] = "$login | $email | $first $last";
+        $query = new \WP_Query( $post_args );
+        foreach ( $query->posts as $post ) {
+            $options[$post->ID] = $post->post_title;
         }
 
         $this->option_args = [
@@ -96,7 +82,7 @@ class UserSelectOption extends AbstractAdminOption
                 ?>
                 <script>window.addEventListener('load', function() {
                     <?php $args = [ 'key' => $key, 'mode' => 'single' ]; ?>
-                    WPAdminOptions.UserSelectOption(<?= json_encode( $args ); ?>);
+                    WPAdminOptions.PostTypeSelectOption(<?= json_encode( $args ); ?>);
                 });</script>
             </td>
         </tr>
@@ -116,7 +102,8 @@ class UserSelectOption extends AbstractAdminOption
                     <select
                         id="<?= $args['key']; ?>"
                         name="<?= $args['key']; ?>"
-                        class="<?= $args['css_classes']; ?> select2">
+                        class="<?= $args['css_classes']; ?> select2"
+                        v-model="selectedPost">
                         <?php
                         foreach ( $args['options'] as $_value => $label ) {
                             $selected = $args['value'] == $_value ? ' selected="selected"' : '';
@@ -131,7 +118,7 @@ class UserSelectOption extends AbstractAdminOption
                 <hr>
                 <div class="wao-items">
                     <p v-if="!items.length">
-                        No users have been selected.
+                        No <?= strtolower( $this->get_post_type_label('plural') ); ?> have been selected.
                     </p>
                     <div v-for="(item, i) in items" class="wao-item" :key="item"
                          :class="{'wao-dragging': dragIndex === i, 'wao-dragover': dragOverIndex === i}"
@@ -165,12 +152,32 @@ class UserSelectOption extends AbstractAdminOption
 
     public function render_scripts() {
         $key = esc_attr( $this->args['key'] );
-
         ?>
         <script>window.addEventListener('load', function() {
-            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url() ]; ?>
-            WPAdminOptions.UserSelectOption(<?= json_encode( $args ); ?>);
+            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'adminUrl' => admin_url(), 'homeUrl' => home_url() ]; ?>
+            WPAdminOptions.PostTypeSelectOption(<?= json_encode( $args ); ?>);
         });</script>
         <?php
+    }
+
+    /**
+     * Get the singular or plural post type label for this option.
+     *
+     * @param string $type
+     * @return string
+     */
+    public function get_post_type_label( $type = 'singular' ) {
+        $post_type = $this->args['post_type'];
+        $post_type_object = get_post_type_object( $post_type );
+        $post_label = 'singular' === $type ? 'post' : 'posts';
+        if ( is_a( $post_type_object, \WP_Post_Type::class ) ) {
+            if ( 'singular' === $type ) {
+                $post_label = $post_type_object->labels->singular_name;
+            }
+            if ( 'plural' === $type ) {
+                $post_label = $post_type_object->labels->name;
+            }
+        }
+        return strtolower( $post_label );
     }
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Zawntech\WPAdminOptions;
+namespace AllegedWizard\WPAdminOptions\Fields;
 
 class HtmlOption extends AbstractAdminOption
 {
