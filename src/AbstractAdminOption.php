@@ -22,6 +22,13 @@ abstract class AbstractAdminOption
         'help' => '',
         'placeholder' => '',
 
+        // Password
+        'prevent_reveal' => false,
+
+        // Telephone
+        'telephone_format' => '',
+        'digits_only' => false,
+
         // Number
         'step' => '',
         'min' => '',
@@ -151,6 +158,46 @@ abstract class AbstractAdminOption
         return ! empty( $this->args['readonly'] );
     }
 
+    /**
+     * Whether the password reveal button should be shown.
+     */
+    protected function should_show_password_reveal() {
+        return 'password' === $this->args['type'] && empty( $this->args['prevent_reveal'] );
+    }
+
+    /**
+     * Render the password reveal toggle button and its script.
+     */
+    protected function render_password_reveal( $key ) {
+        ?>
+        <button type="button" class="wao-reveal-btn" data-reveal-target="<?= $key; ?>" title="Show/hide password">
+            <span class="wao-reveal-icon">&#x1F441;</span>
+        </button>
+        <script>window.addEventListener('load', function() {
+            WPAdminOptions.PasswordReveal(<?= json_encode( [ 'key' => $key ] ); ?>);
+        });</script>
+        <?php
+    }
+
+    /**
+     * Render the telephone format script if applicable.
+     */
+    protected function maybe_render_tel_script( $key ) {
+        if ( 'tel' !== $this->args['type'] ) {
+            return;
+        }
+        $format = $this->args['telephone_format'];
+        if ( empty( $format ) ) {
+            return;
+        }
+        ?>
+        <?php $tel_args = [ 'key' => $key, 'format' => $format, 'digitsOnly' => ! empty( $this->args['digits_only'] ) ]; ?>
+        <script>window.addEventListener('load', function() {
+            WPAdminOptions.TelMask(<?= json_encode( $tel_args ); ?>);
+        });</script>
+        <?php
+    }
+
     protected function render_copy_button( $key ) {
         ?>
         <button type="button" class="wao-copy-btn" data-copy-target="<?= $key; ?>" title="Copy to clipboard">
@@ -169,13 +216,15 @@ abstract class AbstractAdminOption
         $description = trim( $this->args['description'] );
         $input_attributes = $this->prepare_input_attributes();
         $show_copy = $this->should_enable_copy();
+        $show_reveal = $this->should_show_password_reveal();
         ?>
         <div class="form-field" id="row-<?= $key; ?>">
             <?php $this->render_option_label( false ); ?>
-            <?php if ( $show_copy ) : ?>
+            <?php if ( $show_copy || $show_reveal ) : ?>
             <div class="wao-copy-wrap">
                 <?php printf( '<input %s>', $input_attributes ); ?>
-                <?php $this->render_copy_button( $key ); ?>
+                <?php if ( $show_reveal ) $this->render_password_reveal( $key ); ?>
+                <?php if ( $show_copy ) $this->render_copy_button( $key ); ?>
             </div>
             <?php else : ?>
             <?php printf( '<input %s>', $input_attributes ); ?>
@@ -184,6 +233,7 @@ abstract class AbstractAdminOption
             if ( !empty( $description ) ) {
                 printf( '%s', $description );
             }
+            $this->maybe_render_tel_script( $key );
             ?>
         </div>
         <?php
@@ -194,14 +244,16 @@ abstract class AbstractAdminOption
         $description = trim( $this->args['description'] );
         $input_attributes = $this->prepare_input_attributes();
         $show_copy = $this->should_enable_copy();
+        $show_reveal = $this->should_show_password_reveal();
         ?>
         <tr id="row-<?= $key; ?>">
             <?php $this->render_option_label(); ?>
             <td>
-                <?php if ( $show_copy ) : ?>
+                <?php if ( $show_copy || $show_reveal ) : ?>
                 <div class="wao-copy-wrap">
                     <?php printf( '<input %s>', $input_attributes ); ?>
-                    <?php $this->render_copy_button( $key ); ?>
+                    <?php if ( $show_reveal ) $this->render_password_reveal( $key ); ?>
+                    <?php if ( $show_copy ) $this->render_copy_button( $key ); ?>
                 </div>
                 <?php else : ?>
                 <?php printf( '<input %s>', $input_attributes ); ?>
@@ -210,6 +262,7 @@ abstract class AbstractAdminOption
                 if ( !empty( $description ) ) {
                     printf( '<p><code>%s</code></p>', $description );
                 }
+                $this->maybe_render_tel_script( $key );
                 ?>
             </td>
         </tr>

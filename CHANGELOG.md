@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 ## [dev]
 
 ### Added
+- `OptionsContainer` class for grouping options into collapsible, styled card sections with headers
+- Closure-based `fields` parameter on `OptionsContainer` for direct class instantiation inside output-buffered callbacks
+- Password reveal toggle button on `InputOption` (type `password`) with `prevent_reveal` parameter to disable
+- Telephone input masking via `telephone_format` parameter (`US`, `International`, or custom mask pattern)
+- `digits_only` parameter for tel inputs — displays formatted value but submits raw digits via hidden input
+- `PasswordReveal` JS handler for toggling password visibility
+- `TelMask` JS handler for input formatting with cursor position preservation
+- `OptionsContainer` JS handler for collapse/expand with localStorage persistence
+- HSV color picker with alpha channel support (`swatches` type on `ColorOption`)
+- `color_swatches` parameter on `ColorOption` for preset swatch arrays
+- Select2 placeholder support on `SelectOption` (single and multiple modes)
+- `render_test_options()` on `Bootstrap\WPAdminOptions` with comprehensive examples for all option types
+- `help` tooltip attributes across all test option fields
 - `Bootstrap\WPAdminOptions` class for centralized CDN asset enqueuing (Vue.js 3.5.22, Select2 4.0.13)
 - Auto-initialization of assets via `AbstractAdminOption` on first use
 - `assets/css/wp-admin-options.css` stylesheet with `wao-` prefixed utility classes and Tailwind UI-inspired styling
@@ -20,6 +33,8 @@ All notable changes to this project will be documented in this file.
 - `enable_test_mode()` for inline CSS and JS output via `<style>` and `<script>` tags
 - Array value validation with red error banner (`render_array_error()`) for options requiring array input
 - `.wao-error` CSS class for error banner styling
+- CSS for Options Container (`.wao-container`, `.wao-collapsed`), password reveal (`.wao-reveal-btn`), and color picker panel (`.wao-cp-*`)
+- Auto-detection of external package path for inline asset fallback when outside WP installation
 
 ### Changed
 - Upgraded from Vue.js 2 to Vue.js 3 (`new Vue()` → `Vue.createApp().mount()`)
@@ -33,12 +48,14 @@ All notable changes to this project will be documented in this file.
 - Removed all redundant `$(document).ready` / `jQuery(document).ready` wrappers from JS (window load guarantees DOM readiness)
 - ExampleJson options refactored as extension pattern examples using `WPAdminOptions._merge()` and `_dragMixin()`/`_itemMixin()`
 - Disabled drag-and-drop attributes on singular AttachmentOption (non-multiple mode)
+- `ColorOption` refactored to support `swatches` type alongside existing `spectrum` and default WordPress pickers
 
 ### Fixed
 - Missing `</script>` closing tags in SelectOption and PostTypeSelectOption
 - `.wao-vue-wrap { display: none !important }` preventing Vue multi-select components from rendering
 - Missing `@click` handler on ExampleJsonMediaOption "Remove Image" button
 - Uninitialized `$date` variable in DateTimeOption when value is empty
+- Color picker panel clipped by `overflow: hidden` inside OptionsContainer — body now uses `overflow: visible` when expanded
 
 ## [1.0.0]
 

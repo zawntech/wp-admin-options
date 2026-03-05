@@ -8,17 +8,44 @@ class ColorOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         $value = $this->args['value'];
         $description = trim( $this->args['description'] );
-        ?>
-        <div class="form-field" id="row-<?= $key; ?>">
-            <?php $this->render_option_label( false ); ?>
-            <input type="text" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
-            <?php
-            if ( !empty( $description ) ) {
-                printf( '<p>%s</p>', $description );
+        $color_picker_type = $this->args['type'] ?? '';
+
+        if ( 'swatches' === $color_picker_type ) {
+            if ( empty( $this->args['color_swatches'] ) || ! is_array( $this->args['color_swatches'] ) ) {
+                ?>
+                <div class="form-field" id="row-<?= $key; ?>">
+                    <?php $this->render_option_label( false ); ?>
+                    <div class="wao-error">The "color_swatches" property is required and must be a non-empty array for the swatches color picker.</div>
+                </div>
+                <?php
+                return;
             }
             ?>
-        </div>
-        <?php
+            <div class="form-field" id="row-<?= $key; ?>">
+                <?php $this->render_option_label( false ); ?>
+                <div id="wao-swatches-<?= $key; ?>" class="wao-swatches-wrap"></div>
+                <input type="hidden" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
+                <?php
+                if ( !empty( $description ) ) {
+                    printf( '<p>%s</p>', $description );
+                }
+                ?>
+            </div>
+            <?php
+        } else {
+            ?>
+            <div class="form-field" id="row-<?= $key; ?>">
+                <?php $this->render_option_label( false ); ?>
+                <input type="text" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
+                <?php
+                if ( !empty( $description ) ) {
+                    printf( '<p>%s</p>', $description );
+                }
+                ?>
+            </div>
+            <?php
+        }
+
         $this->scripts();
     }
 
@@ -26,19 +53,49 @@ class ColorOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         $value = $this->args['value'];
         $description = trim( $this->args['description'] );
-        ?>
-        <tr id="row-<?= $key; ?>">
-            <?php $this->render_option_label(); ?>
-            <td>
-                <input type="text" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
-                <?php
-                if ( !empty( $description ) ) {
-                    printf( '<p><code>%s</code></p>', $description );
-                }
+        $color_picker_type = $this->args['type'] ?? '';
+
+        if ( 'swatches' === $color_picker_type ) {
+            if ( empty( $this->args['color_swatches'] ) || ! is_array( $this->args['color_swatches'] ) ) {
                 ?>
-            </td>
-        </tr>
-        <?php
+                <tr id="row-<?= $key; ?>">
+                    <?php $this->render_option_label(); ?>
+                    <td>
+                        <div class="wao-error">The "color_swatches" property is required and must be a non-empty array for the swatches color picker.</div>
+                    </td>
+                </tr>
+                <?php
+                return;
+            }
+            ?>
+            <tr id="row-<?= $key; ?>">
+                <?php $this->render_option_label(); ?>
+                <td>
+                    <div id="wao-swatches-<?= $key; ?>" class="wao-swatches-wrap"></div>
+                    <input type="hidden" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
+                    <?php
+                    if ( !empty( $description ) ) {
+                        printf( '<p><code>%s</code></p>', $description );
+                    }
+                    ?>
+                </td>
+            </tr>
+            <?php
+        } else {
+            ?>
+            <tr id="row-<?= $key; ?>">
+                <?php $this->render_option_label(); ?>
+                <td>
+                    <input type="text" name="<?= $key; ?>" value="<?= esc_attr( $value ); ?>">
+                    <?php
+                    if ( !empty( $description ) ) {
+                        printf( '<p><code>%s</code></p>', $description );
+                    }
+                    ?>
+                </td>
+            </tr>
+            <?php
+        }
 
         $this->scripts();
     }
@@ -46,7 +103,9 @@ class ColorOption extends AbstractAdminOption
     public function scripts() {
         $color_picker_type = $this->args['type'] ?? '';
 
-        if ( 'spectrum' === $color_picker_type ) {
+        if ( 'swatches' === $color_picker_type ) {
+            // No external libraries needed for swatches.
+        } elseif ( 'spectrum' === $color_picker_type ) {
             wp_register_script( 'color-picker-spectrum', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.js' );
             wp_register_style( 'color-picker-spectrum', 'https://cdnjs.cloudflare.com/ajax/libs/spectrum/1.8.1/spectrum.min.css' );
             wp_enqueue_style( 'color-picker-spectrum' );
@@ -59,9 +118,14 @@ class ColorOption extends AbstractAdminOption
 
         add_action( 'admin_footer', function() use ( $color_picker_type ) {
             $key = esc_attr( $this->args['key'] );
+            $args = [ 'key' => $key, 'type' => $color_picker_type ];
+
+            if ( 'swatches' === $color_picker_type ) {
+                $args['swatches'] = $this->args['color_swatches'];
+                $args['value'] = $this->args['value'];
+            }
             ?>
             <script>window.addEventListener('load', function() {
-                <?php $args = [ 'key' => $key, 'type' => $color_picker_type ]; ?>
                 WPAdminOptions.ColorOption(<?= json_encode( $args ); ?>);
             });</script>
             <?php

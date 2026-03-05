@@ -116,6 +116,68 @@
     font-weight: 600 !important;
 }
 
+/* ==========================================================================
+   Password Reveal Button – attached to right side of password input
+   ========================================================================== */
+
+.wao-reveal-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 40px !important;
+    padding: 0 12px !important;
+    font-size: 16px !important;
+    color: var(--wao-text-muted) !important;
+    background-color: var(--wao-bg-muted) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-left: none !important;
+    border-radius: 0 !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    line-height: 1 !important;
+}
+
+/* When reveal is the last button in the group, round its right corners */
+.wao-reveal-btn:last-child {
+    border-top-right-radius: var(--wao-radius) !important;
+    border-bottom-right-radius: var(--wao-radius) !important;
+}
+
+.wao-reveal-btn:hover {
+    background-color: #e5e7eb !important;
+    color: var(--wao-text) !important;
+}
+
+.wao-reveal-btn:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: 0 0 0 3px var(--wao-ring) !important;
+    z-index: 1 !important;
+}
+
+.wao-reveal-btn.wao-reveal-active {
+    color: var(--wao-border-focus) !important;
+    background-color: var(--wao-bg) !important;
+}
+
+.wao-reveal-icon {
+    font-size: 14px !important;
+    line-height: 1 !important;
+    filter: grayscale(1) !important;
+    opacity: 0.6 !important;
+    transition: filter var(--wao-transition), opacity var(--wao-transition) !important;
+}
+
+.wao-reveal-btn:hover .wao-reveal-icon {
+    opacity: 0.8 !important;
+}
+
+.wao-reveal-btn.wao-reveal-active .wao-reveal-icon {
+    filter: grayscale(0) !important;
+    opacity: 1 !important;
+}
+
 /* Select element with dropdown arrow */
 select.wao-input {
     padding-right: 36px !important;
@@ -1026,6 +1088,481 @@ input[type="checkbox"].wao-toggle:focus {
     border: none !important;
     border-top: 1px solid #e5e7eb !important;
     margin: 12px 0 !important;
+}
+
+/* ==========================================================================
+   Color Picker (swatches mode)
+   ========================================================================== */
+
+/* Container */
+.wao-cp {
+    display: inline-block !important;
+    position: relative !important;
+}
+
+/* -- Header row: preview + input + buttons -- */
+.wao-cp-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.wao-cp-preview {
+    display: inline-block !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    border-radius: var(--wao-radius) !important;
+    border: 1px solid var(--wao-border) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    /* Checkerboard behind preview to show transparency */
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%) !important;
+    background-size: 8px 8px !important;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0 !important;
+}
+
+.wao-cp-preview-empty {
+    background-image:
+        linear-gradient(to top right, transparent calc(50% - 1px), #d1d5db, transparent calc(50% + 1px)) !important;
+    background-size: 100% 100% !important;
+    background-position: center !important;
+}
+
+.wao-cp-value {
+    width: 160px !important;
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+    font-family: monospace !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+}
+
+.wao-cp-value:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.wao-cp-pick-btn,
+.wao-cp-clear-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 6px 14px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+}
+
+.wao-cp-pick-btn:hover,
+.wao-cp-clear-btn:hover {
+    background-color: var(--wao-bg-muted) !important;
+    border-color: #b0b6bf !important;
+}
+
+.wao-cp-pick-btn:focus,
+.wao-cp-clear-btn:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.wao-cp-clear-btn {
+    min-width: 32px !important;
+    padding: 6px 8px !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    color: var(--wao-text-muted) !important;
+}
+
+.wao-cp-clear-btn:hover {
+    color: #dc2626 !important;
+    border-color: #fca5a5 !important;
+}
+
+/* -- Picker panel -- */
+.wao-cp-panel {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    margin-top: 8px !important;
+    padding: 12px !important;
+    width: 280px !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius-lg) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    z-index: 100000 !important;
+}
+
+/* -- Saturation/Value area -- */
+.wao-cp-sv {
+    position: relative !important;
+    width: 100% !important;
+    height: 160px !important;
+    border-radius: var(--wao-radius) !important;
+    cursor: crosshair !important;
+    overflow: hidden !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+.wao-cp-sv-white {
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(to right, #ffffff, transparent) !important;
+    border-radius: inherit !important;
+}
+
+.wao-cp-sv-black {
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(to bottom, transparent, #000000) !important;
+    border-radius: inherit !important;
+}
+
+.wao-cp-sv-cursor {
+    position: absolute !important;
+    width: 14px !important;
+    height: 14px !important;
+    margin: -7px 0 0 -7px !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3), inset 0 0 0 1px rgba(0, 0, 0, 0.2) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+/* -- Hue bar -- */
+.wao-cp-hue {
+    position: relative !important;
+    width: 100% !important;
+    height: 14px !important;
+    border-radius: 7px !important;
+    background: linear-gradient(to right,
+        #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000) !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+}
+
+/* -- Alpha bar -- */
+.wao-cp-alpha {
+    position: relative !important;
+    width: 100% !important;
+    height: 14px !important;
+    border-radius: 7px !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    /* Checkerboard */
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%) !important;
+    background-size: 8px 8px !important;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0 !important;
+}
+
+.wao-cp-alpha-fill {
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: inherit !important;
+}
+
+/* -- Shared slider thumb -- */
+.wao-cp-slider-thumb {
+    position: absolute !important;
+    top: 50% !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: -9px 0 0 -9px !important;
+    background: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    border-radius: 50% !important;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+/* -- Custom input inside picker -- */
+.wao-cp-custom {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
+
+.wao-cp-custom-row {
+    display: flex !important;
+    gap: 4px !important;
+}
+
+.wao-cp-custom-input {
+    flex: 1 !important;
+    min-width: 0 !important;
+    padding: 5px 8px !important;
+    font-size: 12px !important;
+    font-family: monospace !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    transition: border-color var(--wao-transition), box-shadow var(--wao-transition) !important;
+}
+
+.wao-cp-custom-input:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.wao-cp-custom-input.wao-cp-custom-invalid {
+    border-color: #fca5a5 !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+}
+
+.wao-cp-apply-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1.5 !important;
+    color: var(--wao-text) !important;
+    background-color: var(--wao-bg) !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+    white-space: nowrap !important;
+}
+
+.wao-cp-apply-btn:hover {
+    background-color: var(--wao-bg-muted) !important;
+    border-color: #b0b6bf !important;
+}
+
+.wao-cp-apply-btn:focus {
+    outline: none !important;
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: var(--wao-shadow-sm), 0 0 0 3px var(--wao-ring) !important;
+}
+
+.wao-cp-custom-error {
+    font-size: 11px !important;
+    color: #dc2626 !important;
+    line-height: 1.3 !important;
+}
+
+/* -- Preset swatches inside picker -- */
+.wao-cp-swatches {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    padding-top: 4px !important;
+    border-top: 1px solid #e5e7eb !important;
+}
+
+.wao-swatch-btn {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px !important;
+    padding: 0 !important;
+    border: 2px solid transparent !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    transition: all var(--wao-transition) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    outline: none !important;
+}
+
+.wao-swatch-btn:hover {
+    transform: scale(1.2) !important;
+    box-shadow: var(--wao-shadow) !important;
+    z-index: 1 !important;
+}
+
+.wao-swatch-btn:focus {
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: 0 0 0 2px var(--wao-ring) !important;
+    z-index: 2 !important;
+}
+
+.wao-swatch-btn.wao-swatch-active {
+    border-color: var(--wao-border-focus) !important;
+    box-shadow: 0 0 0 2px var(--wao-ring) !important;
+    transform: scale(1.15) !important;
+}
+
+/* ==========================================================================
+   Options Container
+   ========================================================================== */
+
+.wao-container {
+    margin-bottom: 16px !important;
+    border: 1px solid var(--wao-border) !important;
+    border-radius: var(--wao-radius-lg) !important;
+    background-color: var(--wao-bg) !important;
+    box-shadow: var(--wao-shadow-sm) !important;
+    overflow: hidden !important;
+}
+
+/* -- Header -- */
+.wao-container-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 14px 18px !important;
+    background-color: var(--wao-bg-muted) !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    transition: background-color var(--wao-transition) !important;
+}
+
+.wao-container-header:hover {
+    background-color: #f3f4f6 !important;
+}
+
+.wao-container-title-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.wao-container-title {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.4 !important;
+    color: var(--wao-text) !important;
+}
+
+.wao-container-desc {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    color: var(--wao-text-muted) !important;
+}
+
+/* -- Toggle button -- */
+.wao-container-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    padding: 0 !important;
+    font-size: 18px !important;
+    line-height: 1 !important;
+    color: var(--wao-text-muted) !important;
+    background: none !important;
+    border: none !important;
+    border-radius: var(--wao-radius) !important;
+    cursor: pointer !important;
+    transition: transform 200ms ease, color var(--wao-transition), background-color var(--wao-transition) !important;
+    box-shadow: none !important;
+}
+
+.wao-container-toggle:hover {
+    color: var(--wao-text) !important;
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.wao-container-toggle:focus {
+    outline: none !important;
+}
+
+/* -- Body -- */
+.wao-container-body {
+    padding: 0 18px 18px !important;
+    overflow: visible !important;
+    max-height: none !important;
+    opacity: 1 !important;
+}
+
+/* -- Collapsed state -- */
+.wao-container.wao-collapsed .wao-container-header {
+    border-bottom-color: transparent !important;
+}
+
+.wao-container.wao-collapsed .wao-container-body {
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    transition: max-height 300ms ease, padding 300ms ease, opacity 200ms ease !important;
+}
+
+.wao-container.wao-collapsed .wao-container-toggle {
+    transform: rotate(-90deg) !important;
+}
+
+/* -- Stacked table layout inside container -- */
+.wao-container-table {
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.wao-container-table,
+.wao-container-table tbody,
+.wao-container-table tr,
+.wao-container-table th,
+.wao-container-table td {
+    display: block !important;
+    width: 100% !important;
+}
+
+.wao-container-table tr {
+    padding: 16px 0 !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+}
+
+.wao-container-table tr:last-child {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+}
+
+.wao-container-table tr:first-child {
+    padding-top: 18px !important;
+}
+
+.wao-container-table th {
+    padding: 0 0 6px 0 !important;
+    text-align: left !important;
+}
+
+.wao-container-table td {
+    padding: 0 !important;
 }
 
 /* ==========================================================================

@@ -89,6 +89,8 @@ class SelectOption extends AbstractAdminOption
                         name="<?= $args['key']; ?>"
                         class="<?= $args['css_classes']; ?> select2"
                         v-model="selectedPost">
+                        <?php $placeholder = ! empty( $this->args['placeholder'] ) ? esc_html( $this->args['placeholder'] ) : 'Choose option...'; ?>
+                        <option value="" disabled><?= $placeholder; ?></option>
                         <?php
                         foreach ( $args['options'] as $_value => $label ) {
                             $selected = $args['value'] == $_value ? ' selected="selected"' : '';
@@ -139,7 +141,7 @@ class SelectOption extends AbstractAdminOption
         $key = esc_attr( $this->args['key'] );
         ?>
         <script>window.addEventListener('load', function() {
-            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'] ]; ?>
+            <?php $args = [ 'key' => $key, 'mode' => 'multiple', 'items' => $this->get_args()['value'], 'options' => $this->get_args()['options'], 'placeholder' => ! empty( $this->args['placeholder'] ) ? $this->args['placeholder'] : 'Choose option...' ]; ?>
             WPAdminOptions.SelectOption(<?= json_encode( $args ); ?>);
         });</script>
         <?php
